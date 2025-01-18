@@ -316,7 +316,7 @@ void UBackwardWalkState::Enter(ABaseFighter& fighter)
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Entering backward walk state"));
 	fighter.GetMesh()->PlayAnimation(fighter.m_BackwardWalk, 1);
 }
-
+//
 UFightState* UBackwardWalkState::HandleInput(ABaseFighter& fighter)
 {
 	if (fighter.ReturnSpecialMoveByMotion() != nullptr)
