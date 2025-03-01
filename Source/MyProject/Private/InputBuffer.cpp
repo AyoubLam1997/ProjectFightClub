@@ -172,14 +172,11 @@ void UInputBuffer::BufferUpdate()
             //{
             //    // Moves the buffer data higher
             //    bufferItem.SetHoldUsed(i, bufferItem.Buffer[i + 1].HoldTime, bufferItem.Buffer[i + 1].IsUsed);
-         
-            if (bufferItem->m_Buffer.Num() > 1)
+
+            for (int i = bufferItem->m_Buffer.Num() - 1; i > 0; i--)
             {
-                for (int i = bufferItem->m_Buffer.Num() - 1; i > 0; i--)
-                {
-                    // Moves the buffer data higher
-                    bufferItem->SetHoldUsed(i, bufferItem->m_Buffer[i - 1].m_HoldTime, bufferItem->m_Buffer[i - 1].m_IsUsed, bufferItem->m_Buffer[i - 1].m_MotionUsed);
-                }
+                // Moves the buffer data higher
+                bufferItem->SetHoldUsed(i, bufferItem->m_Buffer[i - 1].m_HoldTime, bufferItem->m_Buffer[i - 1].m_IsUsed, bufferItem->m_Buffer[i - 1].m_MotionUsed);
             }
 
             if (bufferItem->InputDirection == EInputType::Left)
@@ -195,6 +192,8 @@ void UInputBuffer::UpdateMotion(bool right)
     for (int i = 0; i < m_MotionInputs.Num(); i++)
     {
         m_MotionInputs[i]->BufferCheck();
+
+        //GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::FromInt(i));
 
         for (int j = 0; j < m_InputBufferItems.Num(); j++)
         {
@@ -216,6 +215,7 @@ void UInputBuffer::UpdateMotion(bool right)
                                 direction = EInputType::Right;
                             else if (!right)
                                 direction = EInputType::Left;
+
                             inputPressed = 1;
                             index = k;
                             break;
@@ -248,18 +248,12 @@ void UInputBuffer::UpdateMotion(bool right)
             }
 
             if (inputPressed && (index > -1) && (direction != EInputType::None))
-            {
                 if (m_MotionInputs[i]->InputCheck(direction))
-                {
                     m_InputBufferItems[j]->m_Buffer[index].SetMotionTrue();
-                }
-            }
         }
 
         if (m_MotionInputs[i]->MotionComplete() == true)
-        {
             GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Motion completed"));
-        }
     }
 }
 

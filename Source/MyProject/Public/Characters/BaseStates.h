@@ -24,13 +24,16 @@ enum class EInputType;
 //	GENERATED_BODY()
 //};
 
-UCLASS(Blueprintable, BlueprintType)
+UCLASS(Blueprintable, BlueprintType, meta = (BlueprintSpawnableComponent))
 class MYPROJECT_API UFightState : public UObject
 {
 	GENERATED_BODY()
 public:
 
 	//UFightState* NextState = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimSequence* m_AnimationSequence;
 
 	virtual void Enter(ABaseFighter& fighter) {};
 	virtual UFightState* HandleInput(ABaseFighter& fighter) { return nullptr; };
@@ -127,9 +130,6 @@ public:
 	virtual UFightState* HandleInput(ABaseFighter& fighter) override { return nullptr; };
 	virtual void Update(ABaseFighter& fighter) override {};
 	virtual void Exit(ABaseFighter& fighter) override {};
-
-	UPROPERTY(EditAnywhere)
-	UAnimSequence* m_AnimationSequence;
 
 	UPROPERTY(EditAnywhere)
 	FVector m_DashImpulse;
@@ -401,9 +401,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	UHitboxResponder* m_Responder;
-
-	UPROPERTY(EditAnywhere)
-	UAnimSequence* m_AnimationSequence;
 
 	virtual void Enter(ABaseFighter& fighter) override;
 	virtual UFightState* HandleInput(ABaseFighter& fighter) override;

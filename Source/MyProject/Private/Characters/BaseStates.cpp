@@ -26,11 +26,11 @@ UFightState* UGroundedState::HandleInput(ABaseFighter& fighter)
 	if (!fighter.IsGrounded())
 		return NewObject<UAirborneState>();
 
+	if (fighter.ReturnSpecialMoveByMotion() != nullptr)
+		return fighter.ReturnSpecialMoveByMotion();
+
 	if(fighter.ReturnInputBuffer()->m_MotionInputs[0]->MotionComplete())
 		return NewObject<UForwardDash>();
-
-	if(fighter.ReturnSpecialMoveByMotion() != nullptr)
-		return fighter.ReturnSpecialMoveByMotion();
 
 	if(fighter.InputCheck(EInputType::LightPunch))
 		return DuplicateObject(fighter.m_LightPunch.GetDefaultObject(), nullptr);
@@ -277,6 +277,9 @@ UFightState* UForwardWalkState::HandleInput(ABaseFighter& fighter)
 	if (fighter.ReturnSpecialMoveByMotion() != nullptr)
 		return fighter.ReturnSpecialMoveByMotion();
 
+	if (fighter.ReturnInputBuffer()->m_MotionInputs[0]->MotionComplete())
+		return NewObject<UForwardDash>();
+
 	for (int i = 0; i < fighter.ReturnInputBuffer()->m_InputBufferItems.Num(); i++)
 	{
 		for (int j = 0; j < fighter.ReturnInputBuffer()->m_InputBufferItems.Num(); j++)
@@ -316,7 +319,7 @@ void UBackwardWalkState::Enter(ABaseFighter& fighter)
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Entering backward walk state"));
 	fighter.GetMesh()->PlayAnimation(fighter.m_BackwardWalk, 1);
 }
-//
+
 UFightState* UBackwardWalkState::HandleInput(ABaseFighter& fighter)
 {
 	if (fighter.ReturnSpecialMoveByMotion() != nullptr)
@@ -383,9 +386,9 @@ void UForwardDash::Update(ABaseFighter& fighter)
 {
 	int frame = (int)(fighter.GetMesh()->GetPosition() * 60);
 
-	FString frameText = FString::FromInt(frame);
+	/*FString frameText = FString::FromInt(frame);
 
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Frame: ") + frameText);
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Frame: ") + frameText);*/
 }
 
 void UForwardDash::Exit(ABaseFighter& fighter)
@@ -677,8 +680,6 @@ void UKnockbackStunState::Update(ABaseFighter& fighter)
 	//fighter.m_FighterMesh->SetPhysicsLinearVelocity(FVector(0, m_Pushback, 0));
 
 	fighter.GetCharacterMovement()->Velocity = FVector(0, m_Pushback, 0);
-
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::SanitizeFloat(fighter.GetCharacterMovement()->Velocity.Y));
 }
 
 void UKnockbackStunState::Exit(ABaseFighter& fighter)

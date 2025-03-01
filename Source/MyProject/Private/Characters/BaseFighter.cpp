@@ -128,13 +128,13 @@ void ABaseFighter::Tick(float DeltaTime)
 	m_BufferHandler->BufferUpdate();
 	m_BufferHandler->UpdateMotion(m_FacingRight);
 
-	for (int i = 0; i < m_BufferHandler->m_InputBufferItems.Num(); i++)
-	{
-		if (m_BufferHandler->m_InputBufferItems[i]->InputDirection == EInputType::LightPunch)
-		{
-			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, UKismetStringLibrary::Conv_BoolToString(m_BufferHandler->m_InputBufferItems[i]->m_Buffer[0].m_IsUsed));
-		}
-	}
+	//for (int i = 0; i < m_BufferHandler->m_InputBufferItems.Num(); i++)
+	//{
+	//	if (m_BufferHandler->m_InputBufferItems[i]->InputDirection == EInputType::LightPunch)
+	//	{
+	//		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, UKismetStringLibrary::Conv_BoolToString(m_BufferHandler->m_InputBufferItems[i]->m_Buffer[0].m_IsUsed));
+	//	}
+	//}
 
 	if(m_FreezeTime > 0)
 	{
