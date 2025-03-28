@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "EditorUtilityWidget.h"
 #include "Components/Viewport.h"
+#include "Animation/SkeletalMeshActor.h"
 #include <Components/CanvasPanel.h>
 #include <Components/CanvasPanelSlot.h>
 #include "MovesEditor.generated.h"
@@ -12,6 +13,9 @@
 /**
  * 
  */
+
+class AFighterMovesEditorActor;
+
 UCLASS(Blueprintable, BlueprintType)
 class MYPROJECT_API UMovesEditor : public UEditorUtilityWidget
 {
@@ -23,13 +27,7 @@ public:
 	TSubclassOf<UFightState> StateToEdit;
 
 	UPROPERTY(BlueprintReadWrite)
-	UAnimSequence* AnimationToPlay;
-
-	UPROPERTY(BlueprintReadWrite)
-	USkeletalMesh* Mesh;
-
-	UPROPERTY(BlueprintReadWrite)
-	USkeletalMeshComponent* MeshComponent;
+	UAnimSequence* CurrentSelectedAnimation;
 
 	UPROPERTY(BlueprintReadWrite)
 	int AnimationDuration;
@@ -66,4 +64,13 @@ public:
 	void SetAnimationData(UAnimSequence* newAnimation);
 	UFUNCTION(BlueprintCallable)
 	void SetMesh(USkeletalMesh* newMesh);
+	UFUNCTION(BlueprintCallable)
+	void SetSelectedFightState(UObject* yourObj, FName name);
+
+protected:
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	AFighterMovesEditorActor* EditorActor;
+
+private:
 };
