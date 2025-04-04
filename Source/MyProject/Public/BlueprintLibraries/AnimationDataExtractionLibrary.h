@@ -21,5 +21,16 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static int ConvertStringToInt(FString textToInt);
-	
+
+	UFUNCTION(BlueprintCallable)
+	static float ConvertStringToFloat(FString textToFloat);
+
+	UFUNCTION(BlueprintCallable)
+	static void UpdateProperty(UObject* object, const FName& name, int value);
+
+	UFUNCTION(BlueprintCallable)
+	static void UpdateFloatProperty(UObject* object, const FName& name, float value);
+
+	UFUNCTION(BlueprintCallable)
+	static void UpdateVectorProperty(UObject* object, const FName& name, FVector value);
 };

@@ -392,12 +392,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int StunTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int m_MinFrame;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int m_MaxFrame;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int m_FreezeTime;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FVector m_BoxPosition;
 
 	UPROPERTY(EditAnywhere)
 	UHitboxResponder* m_Responder;

@@ -886,10 +886,16 @@ void UGroundedAttackState::Update(ABaseFighter& fighter)
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Frame: ") + frameText);
 
 	if (m_CurrentFrame == m_MinFrame)
+	{
+		fighter.m_Hitbox->SetWorldLocation(m_BoxPosition);
 		fighter.m_Hitbox->OpenColliderState();
+	}
 
-	if(m_CurrentFrame == m_MaxFrame)
+	if (m_CurrentFrame == m_MaxFrame)
+	{
+		fighter.m_Hitbox->SetWorldLocation(FVector(0, 0, 0));
 		fighter.m_Hitbox->CloseColliderState();
+	}
 
 	AttackStateUpdate(&fighter);
 }
