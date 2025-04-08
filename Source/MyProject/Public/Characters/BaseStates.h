@@ -400,6 +400,8 @@ public:
 	int m_FreezeTime;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FVector m_BoxPosition;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FVector m_BoxExtent;
 
 	UPROPERTY(EditAnywhere)
 	UHitboxResponder* m_Responder;
