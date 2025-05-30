@@ -221,6 +221,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enhanced Input")
 	UInputMappingContext* MappingContext;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enhanced Input")
+	UInputAction* Right;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enhanced Input")
+	UInputAction* Left;
+
 	USpecialMoveState* ReturnSpecialMove();
 
 	/*UPROPERTY(Instanced, EditAnywhere, BlueprintReadWrite)

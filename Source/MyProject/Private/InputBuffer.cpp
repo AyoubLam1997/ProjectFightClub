@@ -92,7 +92,7 @@ UInputBuffer::UInputBuffer()
 
 UInputBuffer::UInputBuffer(TArray<UMotionInput*>& inputs)
 {
-    m_MotionInputs = inputs;
+    MotionInputs = inputs;
 
     /*UEnhancedInputLocalPlayerSubsystem sus;
 
@@ -118,7 +118,7 @@ UInputBuffer::~UInputBuffer()
 
 void UInputBuffer::add(TArray<UMotionInput*>& inputs)
 {
-    m_MotionInputs = inputs;
+    MotionInputs = inputs;
 
     /*UEnhancedInputLocalPlayerSubsystem sus;
 
@@ -154,15 +154,15 @@ void UInputBuffer::Initialize()
 
 void UInputBuffer::BufferUpdate()
 {
-    GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Blue, FString::FromInt(m_InputBufferItems.Num()));
-    if (m_InputBufferItems.Num() > 0) 
+    GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Blue, FString::FromInt(InputBufferItems.Num()));
+    if (InputBufferItems.Num() > 0) 
     {
        /* for(int i = 0; i < m_InputBufferItems.Num(); i++)
         {
             m_InputBufferItems[i]->InputCheck();
         }*/
 
-        for (auto bufferItem : m_InputBufferItems)
+        for (auto bufferItem : InputBufferItems)
         {
             // Checks if one of the buttons is pressed
             bufferItem->InputCheck();
@@ -173,10 +173,10 @@ void UInputBuffer::BufferUpdate()
             //    // Moves the buffer data higher
             //    bufferItem.SetHoldUsed(i, bufferItem.Buffer[i + 1].HoldTime, bufferItem.Buffer[i + 1].IsUsed);
 
-            for (int i = bufferItem->m_Buffer.Num() - 1; i > 0; i--)
+            for (int i = bufferItem->Buffer.Num() - 1; i > 0; i--)
             {
                 // Moves the buffer data higher
-                bufferItem->SetHoldUsed(i, bufferItem->m_Buffer[i - 1].m_HoldTime, bufferItem->m_Buffer[i - 1].m_IsUsed, bufferItem->m_Buffer[i - 1].m_MotionUsed);
+                bufferItem->SetHoldUsed(i, bufferItem->Buffer[i - 1].HoldTime, bufferItem->Buffer[i - 1].IsUsed, bufferItem->Buffer[i - 1].MotionUsed);
             }
 
             if (bufferItem->InputDirection == EInputType::Left)
@@ -189,26 +189,26 @@ void UInputBuffer::BufferUpdate()
 
 void UInputBuffer::UpdateMotion(bool right)
 {
-    for (int i = 0; i < m_MotionInputs.Num(); i++)
+    for (int i = 0; i < MotionInputs.Num(); i++)
     {
-        m_MotionInputs[i]->BufferCheck();
+        MotionInputs[i]->BufferCheck();
 
         //GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::FromInt(i));
 
-        for (int j = 0; j < m_InputBufferItems.Num(); j++)
+        for (int j = 0; j < InputBufferItems.Num(); j++)
         {
             bool inputPressed = 0;
             int index = -1;
 
             EInputType direction = EInputType::None;
 
-            if (m_InputBufferItems[j]->m_Buffer.Num() > 0)
+            if (InputBufferItems[j]->Buffer.Num() > 0)
             {
-                for(int k = 0; k < m_InputBufferItems[j]->m_Buffer.Num(); k++)
+                for(int k = 0; k < InputBufferItems[j]->Buffer.Num(); k++)
                 {
-                    if (m_InputBufferItems[j]->m_Buffer[k].CanMotionExecute())
+                    if (InputBufferItems[j]->Buffer[k].CanMotionExecute())
                     {
-                        switch (m_InputBufferItems[j]->InputDirection)
+                        switch (InputBufferItems[j]->InputDirection)
                         {
                         case EInputType::Right:
                             if (right)
@@ -248,64 +248,64 @@ void UInputBuffer::UpdateMotion(bool right)
             }
 
             if (inputPressed && (index > -1) && (direction != EInputType::None))
-                if (m_MotionInputs[i]->InputCheck(direction))
-                    m_InputBufferItems[j]->m_Buffer[index].SetMotionTrue();
+                if (MotionInputs[i]->InputCheck(direction))
+                    InputBufferItems[j]->Buffer[index].SetMotionTrue();
         }
 
-        if (m_MotionInputs[i]->MotionComplete() == true)
+        if (MotionInputs[i]->MotionComplete() == true)
             GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Motion completed"));
     }
 }
 
 void UInputStateItem::HoldUp()
 {
-    if (m_HoldTime < 0)
+    if (HoldTime < 0)
     {
-        m_HoldTime = 1;
+        HoldTime = 1;
     }
     else
     {
-        m_HoldTime += 1;
+        HoldTime += 1;
     }
 }
 
 void UInputStateItem::ReleasedUp()
 {
-    if (m_HoldTime > 0)
+    if (HoldTime > 0)
     {
-        m_HoldTime = -1;
+        HoldTime = -1;
 
-        m_IsUsed = false;
-        m_MotionUsed = false;
+        IsUsed = false;
+        MotionUsed = false;
     }
     else
     {
-        m_HoldTime = 0;
+        HoldTime = 0;
     }
 }
 
 void UInputStateItem::SetUsedTrue()
 {
-    m_IsUsed = true;
+    IsUsed = true;
 }
 
 void UInputStateItem::SetMotionTrue()
 {
-    m_MotionUsed = true;
+    MotionUsed = true;
 }
 
 void UInputStateItem::SetHoldUsed(int time, bool used, bool motion)
 {
-    m_HoldTime = time;
+    HoldTime = time;
 
-    m_IsUsed = used;
+    IsUsed = used;
 
-    m_MotionUsed = motion;
+    MotionUsed = motion;
 }
 
 bool UInputStateItem::CanExecute()
 {
-    if (m_HoldTime == 1 && !m_IsUsed)
+    if (HoldTime == 1 && !IsUsed)
     {
         return true;
     }
@@ -315,7 +315,7 @@ bool UInputStateItem::CanExecute()
 
 bool UInputStateItem::CanMotionExecute()
 {
-    if (m_HoldTime == 1 && !m_MotionUsed)
+    if (HoldTime == 1 && !MotionUsed)
     {
         return true;
     }
@@ -327,7 +327,7 @@ UInputBufferItem::UInputBufferItem()
 {
     for (int i = 0; i < 12; i++)
     {
-        m_Buffer.Add(UInputStateItem());
+        Buffer.Add(UInputStateItem());
     }
 }
 
@@ -343,32 +343,32 @@ void UInputBufferItem::AssignDirection(EInputType direction)
 
 void UInputBufferItem::InputCheck()
 {
-    if (m_Buffer.Num() > 0)
+    if (Buffer.Num() > 0)
     {
-        if (m_InputActionPressed)
+        if (InputActionPressed)
         {
-            m_Buffer[0].HoldUp();
+            Buffer[0].HoldUp();
         }
         else
         {
-            m_Buffer[0].ReleasedUp();
+            Buffer[0].ReleasedUp();
         }
     }
 }
 
 void UInputBufferItem::SetUsedTrue()
 {
-    m_Used = true;
+    IsUsed = true;
 }
 
 void UInputBufferItem::SetUsedFalse()
 {
-    m_Used = false;
+    IsUsed = false;
 }
 
 void UInputBufferItem::SetInputActionPressed(bool pressed)
 {
-    m_InputActionPressed = pressed;
+    InputActionPressed = pressed;
 
     if (pressed == 0)
         SetUsedFalse();
@@ -376,7 +376,7 @@ void UInputBufferItem::SetInputActionPressed(bool pressed)
 
 void UInputBufferItem::SetHoldUsed(int index, int time, bool used, bool motion)
 {
-    m_Buffer[index].SetHoldUsed(time, used, motion);
+    Buffer[index].SetHoldUsed(time, used, motion);
 }
 
 UMotionInput::UMotionInput()
@@ -385,7 +385,7 @@ UMotionInput::UMotionInput()
 
 UMotionInput::UMotionInput(TArray<EInputType> motions)
 {
-    m_MotionInputs = motions;
+    MotionInputs = motions;
 }
 
 void UMotionInput::BufferCheck()
@@ -417,7 +417,7 @@ void UMotionInput::ResetInput()
 
 bool UMotionInput::MotionComplete()
 {
-    if (IndexCheck >= m_MotionInputs.Num() && BufferTime <= 12)
+    if (IndexCheck >= MotionInputs.Num() && BufferTime <= 12)
     {
         BufferTime = 12;
 
@@ -429,9 +429,9 @@ bool UMotionInput::MotionComplete()
 
 bool UMotionInput::InputCheck(EInputType input)
 {
-    if (IndexCheck < m_MotionInputs.Num())
+    if (IndexCheck < MotionInputs.Num())
     {
-        if (m_MotionInputs[IndexCheck] == input)
+        if (MotionInputs[IndexCheck] == input)
         {
             IncreaseIndex();
 

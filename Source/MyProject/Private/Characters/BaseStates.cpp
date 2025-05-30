@@ -29,35 +29,35 @@ UFightState* UGroundedState::HandleInput(ABaseFighter& fighter)
 	if (fighter.ReturnSpecialMoveByMotion() != nullptr)
 		return fighter.ReturnSpecialMoveByMotion();
 
-	if(fighter.ReturnInputBuffer()->m_MotionInputs[0]->MotionComplete())
+	if(fighter.ReturnInputBuffer()->MotionInputs[0]->MotionComplete())
 		return NewObject<UForwardDash>();
 
 	if(fighter.InputCheck(EInputType::LightPunch))
 		return DuplicateObject(fighter.m_LightPunch.GetDefaultObject(), nullptr);
 
-	for (int i = 0; i < fighter.ReturnInputBuffer()->m_InputBufferItems.Num(); i++)
+	for (int i = 0; i < fighter.ReturnInputBuffer()->InputBufferItems.Num(); i++)
 	{
-		if (fighter.ReturnInputBuffer()->m_InputBufferItems[i]->m_Buffer.Num() > 0)
+		if (fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer.Num() > 0)
 		{
-			for (int j = i + 1; j < fighter.ReturnInputBuffer()->m_InputBufferItems.Num(); j++)
+			for (int j = i + 1; j < fighter.ReturnInputBuffer()->InputBufferItems.Num(); j++)
 			{
 				if (i == j)
 					continue;
 
-				if (fighter.ReturnInputBuffer()->m_InputBufferItems[i]->InputDirection == EInputType::Top && fighter.ReturnInputBuffer()->m_InputBufferItems[i]->m_Buffer[0].m_HoldTime > 0 &&
-					fighter.ReturnInputBuffer()->m_InputBufferItems[j]->InputDirection == fighter.ReturnForwardInput() && fighter.ReturnInputBuffer()->m_InputBufferItems[j]->m_Buffer[0].m_HoldTime > 0)
+				if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::Top && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0 &&
+					fighter.ReturnInputBuffer()->InputBufferItems[j]->InputDirection == fighter.ReturnForwardInput() && fighter.ReturnInputBuffer()->InputBufferItems[j]->Buffer[0].HoldTime > 0)
 					return NewObject<UForwardJumpState>();
-				if (fighter.ReturnInputBuffer()->m_InputBufferItems[i]->InputDirection == EInputType::Top && fighter.ReturnInputBuffer()->m_InputBufferItems[i]->m_Buffer[0].m_HoldTime > 0 &&
-					fighter.ReturnInputBuffer()->m_InputBufferItems[j]->InputDirection == fighter.ReturnBackwardInput() && fighter.ReturnInputBuffer()->m_InputBufferItems[j]->m_Buffer[0].m_HoldTime > 0)
+				if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::Top && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0 &&
+					fighter.ReturnInputBuffer()->InputBufferItems[j]->InputDirection == fighter.ReturnBackwardInput() && fighter.ReturnInputBuffer()->InputBufferItems[j]->Buffer[0].HoldTime > 0)
 					return NewObject<UBackwardJumpState>();
 			}
 
-			if (fighter.ReturnInputBuffer()->m_InputBufferItems[i]->InputDirection == EInputType::Top && fighter.ReturnInputBuffer()->m_InputBufferItems[i]->m_Buffer[0].m_HoldTime > 0)
+			if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::Top && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0)
 				return NewObject<UNeutralJumpState>();
 
-			if (fighter.ReturnInputBuffer()->m_InputBufferItems[i]->InputDirection == fighter.ReturnForwardInput() && fighter.ReturnInputBuffer()->m_InputBufferItems[i]->m_Buffer[0].m_HoldTime > 0)
+			if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == fighter.ReturnForwardInput() && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0)
 				return NewObject<UForwardWalkState>();
-			if (fighter.ReturnInputBuffer()->m_InputBufferItems[i]->InputDirection == fighter.ReturnBackwardInput() && fighter.ReturnInputBuffer()->m_InputBufferItems[i]->m_Buffer[0].m_HoldTime > 0)
+			if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == fighter.ReturnBackwardInput() && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0)
 				return NewObject<UBackwardWalkState>();
 
 			/*if (fighter.m_BufferHandler->m_InputBufferItems[i]->InputDirection == EInputType::Top && fighter.m_BufferHandler->m_InputBufferItems[i]->m_Buffer[0].m_HoldTime > 0)
@@ -166,11 +166,11 @@ void UCrouchState::Enter(ABaseFighter& fighter)
 
 UFightState* UCrouchState::HandleInput(ABaseFighter& fighter)
 {
-	for (int i = 0; i < fighter.ReturnInputBuffer()->m_InputBufferItems.Num(); i++)
+	for (int i = 0; i < fighter.ReturnInputBuffer()->InputBufferItems.Num(); i++)
 	{
-		if (fighter.ReturnInputBuffer()->m_InputBufferItems[i]->m_Buffer.Num() > 0)
+		if (fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer.Num() > 0)
 		{
-			if (fighter.ReturnInputBuffer()->m_InputBufferItems[i]->InputDirection == EInputType::Down && fighter.ReturnInputBuffer()->m_InputBufferItems[i]->m_Buffer[0].m_HoldTime <= 0)
+			if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::Down && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime <= 0)
 				return NewObject<UGroundedState>();
 		}
 	}
@@ -277,27 +277,27 @@ UFightState* UForwardWalkState::HandleInput(ABaseFighter& fighter)
 	if (fighter.ReturnSpecialMoveByMotion() != nullptr)
 		return fighter.ReturnSpecialMoveByMotion();
 
-	if (fighter.ReturnInputBuffer()->m_MotionInputs[0]->MotionComplete())
+	if (fighter.ReturnInputBuffer()->MotionInputs[0]->MotionComplete())
 		return NewObject<UForwardDash>();
 
-	for (int i = 0; i < fighter.ReturnInputBuffer()->m_InputBufferItems.Num(); i++)
+	for (int i = 0; i < fighter.ReturnInputBuffer()->InputBufferItems.Num(); i++)
 	{
-		for (int j = 0; j < fighter.ReturnInputBuffer()->m_InputBufferItems.Num(); j++)
+		for (int j = 0; j < fighter.ReturnInputBuffer()->InputBufferItems.Num(); j++)
 		{
 			if (i == j)
 				continue;
 
-			if (fighter.ReturnInputBuffer()->m_InputBufferItems[i]->InputDirection == EInputType::Top && fighter.ReturnInputBuffer()->m_InputBufferItems[i]->m_Buffer[0].m_HoldTime > 0 &&
-				fighter.ReturnInputBuffer()->m_InputBufferItems[j]->InputDirection == fighter.ReturnForwardInput() && fighter.ReturnInputBuffer()->m_InputBufferItems[j]->m_Buffer[0].m_HoldTime > 0)
+			if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::Top && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0 &&
+				fighter.ReturnInputBuffer()->InputBufferItems[j]->InputDirection == fighter.ReturnForwardInput() && fighter.ReturnInputBuffer()->InputBufferItems[j]->Buffer[0].HoldTime > 0)
 			{
 				return NewObject<UForwardJumpState>();
 			}
 
 		}
 
-		if (fighter.ReturnInputBuffer()->m_InputBufferItems[i]->InputDirection == fighter.ReturnForwardInput() && fighter.ReturnInputBuffer()->m_InputBufferItems[i]->m_Buffer[0].m_HoldTime <= 0 ||
-			(fighter.ReturnInputBuffer()->m_InputBufferItems[i]->InputDirection == EInputType::Right && fighter.ReturnInputBuffer()->m_InputBufferItems[i]->m_Buffer[0].m_HoldTime > 0 &&
-				fighter.ReturnInputBuffer()->m_InputBufferItems[i]->InputDirection == EInputType::Left && fighter.ReturnInputBuffer()->m_InputBufferItems[i]->m_Buffer[0].m_HoldTime > 0))
+		if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == fighter.ReturnForwardInput() && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime <= 0 ||
+			(fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::Right && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0 &&
+				fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::Left && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0))
 			return NewObject<UGroundedState>();
 	}
 
@@ -325,24 +325,24 @@ UFightState* UBackwardWalkState::HandleInput(ABaseFighter& fighter)
 	if (fighter.ReturnSpecialMoveByMotion() != nullptr)
 		return fighter.ReturnSpecialMoveByMotion();
 
-	for (int i = 0; i < fighter.ReturnInputBuffer()->m_InputBufferItems.Num(); i++)
+	for (int i = 0; i < fighter.ReturnInputBuffer()->InputBufferItems.Num(); i++)
 	{
-		for (int j = 0; j < fighter.ReturnInputBuffer()->m_InputBufferItems.Num(); j++)
+		for (int j = 0; j < fighter.ReturnInputBuffer()->InputBufferItems.Num(); j++)
 		{
 			if (i == j)
 				continue;
 
-			if (fighter.ReturnInputBuffer()->m_InputBufferItems[i]->InputDirection == EInputType::Top && fighter.ReturnInputBuffer()->m_InputBufferItems[i]->m_Buffer[0].m_HoldTime > 0 &&
-				fighter.ReturnInputBuffer()->m_InputBufferItems[j]->InputDirection == fighter.ReturnBackwardInput() && fighter.ReturnInputBuffer()->m_InputBufferItems[j]->m_Buffer[0].m_HoldTime > 0)
+			if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::Top && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0 &&
+				fighter.ReturnInputBuffer()->InputBufferItems[j]->InputDirection == fighter.ReturnBackwardInput() && fighter.ReturnInputBuffer()->InputBufferItems[j]->Buffer[0].HoldTime > 0)
 			{
 				return NewObject<UBackwardJumpState>();
 			}
 
 		}
 
-		if (fighter.ReturnInputBuffer()->m_InputBufferItems[i]->InputDirection == fighter.ReturnBackwardInput() && fighter.ReturnInputBuffer()->m_InputBufferItems[i]->m_Buffer[0].m_HoldTime <= 0 ||
-			(fighter.ReturnInputBuffer()->m_InputBufferItems[i]->InputDirection == EInputType::Right && fighter.ReturnInputBuffer()->m_InputBufferItems[i]->m_Buffer[0].m_HoldTime > 0 &&
-				fighter.ReturnInputBuffer()->m_InputBufferItems[i]->InputDirection == EInputType::Left && fighter.ReturnInputBuffer()->m_InputBufferItems[i]->m_Buffer[0].m_HoldTime > 0))
+		if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == fighter.ReturnBackwardInput() && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime <= 0 ||
+			(fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::Right && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0 &&
+				fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::Left && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0))
 			return NewObject<UGroundedState>();
 	}
 
@@ -887,14 +887,14 @@ void UGroundedAttackState::Update(ABaseFighter& fighter)
 
 	if (m_CurrentFrame == m_MinFrame)
 	{
-		fighter.m_Hitbox->SetWorldLocation(m_BoxPosition);
+		fighter.m_Hitbox->SetRelativeLocation(m_BoxPosition);
 		fighter.m_Hitbox->SetBoxExtent(m_BoxExtent);
 		fighter.m_Hitbox->OpenColliderState();
 	}
 
 	if (m_CurrentFrame == m_MaxFrame)
 	{
-		fighter.m_Hitbox->SetWorldLocation(FVector(0, 0, 0));
+		fighter.m_Hitbox->SetRelativeLocation(FVector(0, 0, 0));
 		fighter.m_Hitbox->SetBoxExtent(FVector(0, 0, 0));
 		fighter.m_Hitbox->CloseColliderState();
 	}

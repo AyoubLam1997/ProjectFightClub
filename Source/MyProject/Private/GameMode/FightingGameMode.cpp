@@ -5,6 +5,10 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Camera/CameraComponent.h"
+#include "Engine/LocalPlayer.h"
+#include "AI/AIFighterControllerPawn.h"
+#include "AI/BaseAIController.h"
+#include <EnhancedInputSubsystems.h>
 
 void AFightingGameMode::BeginPlay()
 {
@@ -21,21 +25,30 @@ void AFightingGameMode::BeginPlay()
 	// DEV NOTE: This isn't the way to set the camera to the player. Update in the future
 	GetWorld()->GetPlayerControllerIterator()->Get(0)->Possess(m_P1Fighter);
 	m_P1Fighter->InitializeController();
-
 	m_P1Fighter->StopInput();
-
-	m_P2Fighter = GetWorld()->SpawnActor<ABaseFighter>(m_FighterToSpawn, pos2, rot1, SpawnInfo);
-	//GetWorld()->GetPlayerControllerIterator()->Get(1)->Possess(m_P2Fighter);
-
-	TArray<APlayerController> cons;
 
 	//UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerController, &cons);
 
-	m_P2Fighter->PossessedBy(m_P2Fighter->AIControllerClass.GetDefaultObject());
-	
+	m_P2Fighter = GetWorld()->SpawnActor<ABaseFighter>(m_FighterToSpawn, pos2, rot1, SpawnInfo);
+	//GetWorld()->GetPlayerControllerIterator()->Get(1)->Possess(m_P2Fighter);
+	APlayerController* controller = UGameplayStatics::CreatePlayer(GetWorld(), 1, true);
+	GetWorld()->AddController(controller);
+	controller->Possess(m_P2Fighter);
 	m_P2Fighter->InitializeController();
-
 	m_P2Fighter->StopInput();
+
+	AAIFighterControllerPawn* aiPawn = GetWorld()->SpawnActor<AAIFighterControllerPawn>(AIToSpawn, pos2, rot1, SpawnInfo);
+
+	aiPawn->SpawnDefaultController();
+
+	if(ABaseAIController* aiCont = Cast<ABaseAIController>(aiPawn->Controller))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Controller is AI"));
+
+		aiCont->InitializeController(m_P2Fighter);
+	}
+	else
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Controller is not AI"));
 
 	float y = (m_P1Fighter->GetActorLocation().Y + m_P2Fighter->GetActorLocation().Y) / 2.f;
 

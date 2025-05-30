@@ -47,7 +47,7 @@ public:
 	/*UPROPERTY(EditDefaultsOnly)
 	TEnumAsByte<EInputType> InputDirection;*/
 
-	TArray<EInputType> m_MotionInputs;
+	TArray<EInputType> MotionInputs;
 
 	int BufferTime;
 	int IndexCheck;
@@ -75,10 +75,10 @@ public:
 	void SetUsedTrue();
 	void SetMotionTrue();
 
-	int m_HoldTime = 0;
+	int HoldTime = 0;
 
-	bool m_IsUsed = 0;
-	bool m_MotionUsed = 0;
+	bool IsUsed = 0;
+	bool MotionUsed = 0;
 };
 
 class MYPROJECT_API UInputBufferItem
@@ -101,13 +101,13 @@ public:
 
 	EInputType InputDirection;
 
-	UInputAction* m_Action;
+	UInputAction* Action;
 
-	bool m_Used = 0;
+	bool IsUsed = 0;
 
-	bool m_InputActionPressed = 0;
+	bool InputActionPressed = 0;
 
-	TArray<UInputStateItem> m_Buffer;
+	TArray<UInputStateItem> Buffer;
 
 protected:
 
@@ -123,9 +123,8 @@ public:
 	UInputBuffer(TArray<UMotionInput*>& inputs);
 	~UInputBuffer();
 
-	TArray<UInputBufferItem*> m_InputBufferItems;
-	TArray<UInputAction*> m_InputActions;
-	TArray<UMotionInput*> m_MotionInputs;
+	TArray<UInputBufferItem*> InputBufferItems;
+	TArray<UMotionInput*> MotionInputs;
 
 	void Initialize();
 	void BufferUpdate();

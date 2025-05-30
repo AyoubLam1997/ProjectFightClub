@@ -21,6 +21,8 @@ enum EFighGameState
 	Paused
 };
 
+class AAIFighterControllerPawn;
+
 /**
  * 
  */
@@ -42,6 +44,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ABaseFighter> m_FighterToSpawn;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AAIFighterControllerPawn> AIToSpawn;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	ABaseFighter* m_P1Fighter;

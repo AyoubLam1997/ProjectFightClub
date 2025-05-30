@@ -3,7 +3,8 @@
 
 #include "Characters/BaseFighter.h"
 #include "Engine/GameEngine.h"
-
+#include "Engine/LocalPlayer.h"
+#include "GameFramework/PlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include <Kismet/KismetStringLibrary.h>
@@ -15,7 +16,7 @@ FSpecialMoves::FSpecialMoves()
 
 void FSpecialMoves::Init()
 {
-	m_MotionInput.m_MotionInputs = m_RequiredInput;
+	m_MotionInput.MotionInputs = m_RequiredInput;
 }
 
 // Sets default values
@@ -83,14 +84,14 @@ void ABaseFighter::BeginPlay()
 
 	UMotionInput* dashInput = new UMotionInput();
 
-	dashInput->m_MotionInputs = input;
+	dashInput->MotionInputs = input;
 
-	m_BufferHandler->m_MotionInputs.Add(dashInput);
+	m_BufferHandler->MotionInputs.Add(dashInput);
 
 	for (int i = 0; i < m_SpecialMoves.Num(); i++)
 	{
 		m_SpecialMoves[i].Init();
-		m_BufferHandler->m_MotionInputs.Add(&m_SpecialMoves[i].m_MotionInput);
+		m_BufferHandler->MotionInputs.Add(&m_SpecialMoves[i].m_MotionInput);
 	}
 
 	//m_FighterMesh->OnComponentHit.AddDynamic(this, &ABaseFighter::OnHit);
@@ -203,6 +204,8 @@ void ABaseFighter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Purple, TEXT("Input initialization called"));
+
 	UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 
 	for (int i = 0; i < MappingContext->GetMappings().Num(); i++)
@@ -215,10 +218,10 @@ void ABaseFighter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		{
 			item->AssignDirection(input);
 
-			m_BufferHandler->m_InputBufferItems.Add(item);
+			m_BufferHandler->InputBufferItems.Add(item);
 
-			EnhancedInput->BindAction(MappingContext->GetMappings()[i].Action, ETriggerEvent::Triggered, this, &ABaseFighter::ButtonPressed, m_BufferHandler->m_InputBufferItems.Num() - 1);
-			EnhancedInput->BindAction(MappingContext->GetMappings()[i].Action, ETriggerEvent::Completed, this, &ABaseFighter::ButtonPressed, m_BufferHandler->m_InputBufferItems.Num() - 1);
+			EnhancedInput->BindAction(MappingContext->GetMappings()[i].Action, ETriggerEvent::Triggered, this, &ABaseFighter::ButtonPressed, m_BufferHandler->InputBufferItems.Num() - 1);
+			EnhancedInput->BindAction(MappingContext->GetMappings()[i].Action, ETriggerEvent::Completed, this, &ABaseFighter::ButtonPressed, m_BufferHandler->InputBufferItems.Num() - 1);
 		}
 	}
 }
@@ -337,7 +340,7 @@ void ABaseFighter::ButtonPressed(const FInputActionValue& value, const int index
 {
 	const bool pressed = value.Get<bool>();
 
-	m_BufferHandler->m_InputBufferItems[index]->SetInputActionPressed(pressed);
+	m_BufferHandler->InputBufferItems[index]->SetInputActionPressed(pressed);
 }
 
 void ABaseFighter::AddSuperBar(float value)
@@ -363,21 +366,21 @@ void ABaseFighter::TakeDamage(float damage)
 
 bool ABaseFighter::InputCheck(EInputType input)
 {
-	for (int i = 0; i < ReturnInputBuffer()->m_InputBufferItems.Num(); i++)
+	for (int i = 0; i < ReturnInputBuffer()->InputBufferItems.Num(); i++)
 	{
-		if (ReturnInputBuffer()->m_InputBufferItems[i]->m_Buffer.Num() > 0)
+		if (ReturnInputBuffer()->InputBufferItems[i]->Buffer.Num() > 0)
 		{
-			if (ReturnInputBuffer()->m_InputBufferItems[i]->InputDirection == input)
+			if (ReturnInputBuffer()->InputBufferItems[i]->InputDirection == input)
 			{
 				//DEV NOTE: 0 is the unnused state for the buffer. Start with 1 for input buffer check
-				for (int j = 1; j < ReturnInputBuffer()->m_InputBufferItems[i]->m_Buffer.Num(); j++)
+				for (int j = 1; j < ReturnInputBuffer()->InputBufferItems[i]->Buffer.Num(); j++)
 				{
-					if (ReturnInputBuffer()->m_InputBufferItems[i]->m_Buffer[j].CanExecute())
+					if (ReturnInputBuffer()->InputBufferItems[i]->Buffer[j].CanExecute())
 					{
-						ReturnInputBuffer()->m_InputBufferItems[i]->m_Buffer[j].SetUsedTrue();
+						ReturnInputBuffer()->InputBufferItems[i]->Buffer[j].SetUsedTrue();
 
 						// For debugging purposes
-						int value = m_BufferHandler->m_InputBufferItems[i]->m_Buffer[j].m_HoldTime;
+						int value = m_BufferHandler->InputBufferItems[i]->Buffer[j].HoldTime;
 						GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Entering attack state in buffer ") + InputToString(input) + ": Index " + FString::FromInt(j));
 
 						return 1;
