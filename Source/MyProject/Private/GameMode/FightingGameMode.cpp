@@ -136,9 +136,9 @@ void AFightingGameMode::Tick(float DeltaTime)
 	FVector loc1 = m_P1Fighter->GetActorLocation();
 	FVector loc2 = m_P2Fighter->GetActorLocation();
 
-	float dis = fabsf(loc1.Y - loc2.Y);
+	Distance = fabsf(loc1.Y - loc2.Y);
 
-	if(dis > 2600.f)
+	if(Distance > 2600.f)
 	{
 		if (loc1.Y >= loc2.Y)
 		{

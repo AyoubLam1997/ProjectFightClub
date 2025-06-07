@@ -225,6 +225,10 @@ public:
 	UInputAction* Right;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enhanced Input")
 	UInputAction* Left;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enhanced Input")
+	UInputAction* LightPunch;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enhanced Input")
+	UInputAction* LightKick;
 
 	USpecialMoveState* ReturnSpecialMove();
 

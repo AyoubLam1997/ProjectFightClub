@@ -3,6 +3,21 @@
 
 #include "AI/BaseAIController.h"
 #include "Characters/BaseFighter.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameMode/FightingGameMode.h"
+
+void FAICommandAction::UpdateAction(ABaseAIController* controller)
+{
+	CurrentFrame += 1;
+
+	if(InputActionList.Contains(CurrentFrame))
+		controller->SetInputState(InputActionList[CurrentFrame]);
+}
+
+bool FAICommandAction::IsOnFinalFrame()
+{
+	return CurrentFrame >= MaxFrame;
+}
 
 ABaseAIController::ABaseAIController()
 {
@@ -22,6 +37,8 @@ void ABaseAIController::InitializeController(ABaseFighter* fighter)
 
 	RightInput = PossessedFighter->Right;
 	LeftInput = PossessedFighter->Left;
+	LightPunchInput = PossessedFighter->LightPunch;
+	LightKickInput = PossessedFighter->LightKick;
 
 	IsFacingRight = PossessedFighter->IsFacingRight();
 
@@ -32,26 +49,38 @@ void ABaseAIController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	FightGameMode = Cast<AFightingGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 }
 
 void ABaseAIController::Tick(float dt)
 {
 	Super::Tick(dt);
 
+	CurrentCommandAction.UpdateAction(this);
+
 	if (PossessedFighter != nullptr)
 	{
 		IsFacingRight = PossessedFighter->IsFacingRight();
 
-		/*if (ShouldPress == 0)
-			ShouldPress = 1;
-		else
+		switch(AIInputState)
+		{
+		case Idle:
+			break;
+
+		case Walk:
 		{
 			PressForward();
+		}
+		break;
+		case Attack:
+		{
+			PressLightPunch();
+		}
+		break;
 
-			ShouldPress = 0;
-		}*/
-
-		//PressForward();
+		default:
+			break;
+		}
 	}
 }
 
@@ -104,22 +133,56 @@ void ABaseAIController::PressBackward()
 	}
 }
 
-void ABaseAIController::PressForward()
+void ABaseAIController::PressUp()
 {
 	if (PossessedFighter != nullptr)
 	{
-		FInputActionValue ActionValue(true); // This can be a bool, float, FVector2D, or FVector
-		PlayerInput->InjectInputForAction(UpInput, ActionValue);
+		//FInputActionValue ActionValue(true); // This can be a bool, float, FVector2D, or FVector
+		//PlayerInput->InjectInputForAction(UpInput, ActionValue);
 	}
 }
 
-void ABaseAIController::PressBackward()
+void ABaseAIController::PressDown()
+{
+	if (PossessedFighter != nullptr)
+	{
+		//FInputActionValue ActionValue(true); // This can be a bool, float, FVector2D, or FVector
+		//PlayerInput->InjectInputForAction(DownInput, ActionValue);
+	}
+}
+
+void ABaseAIController::PressLightPunch()
 {
 	if (PossessedFighter != nullptr)
 	{
 		FInputActionValue ActionValue(true); // This can be a bool, float, FVector2D, or FVector
-		PlayerInput->InjectInputForAction(DownInput, ActionValue);
+		PlayerInput->InjectInputForAction(LightPunchInput, ActionValue);
 	}
+}
+
+void ABaseAIController::PressLightKick()
+{
+	if (PossessedFighter != nullptr)
+	{
+		FInputActionValue ActionValue(true); // This can be a bool, float, FVector2D, or FVector
+		PlayerInput->InjectInputForAction(LightKickInput, ActionValue);
+	}
+}
+
+void ABaseAIController::SetInputState(EAIInputState InputState)
+{
+	AIInputState = InputState;
+}
+
+void ABaseAIController::SetNewCommand(FAICommandAction NewCommand)
+{
+	CurrentCommandAction = NewCommand;
+}
+
+
+bool ABaseAIController::CommandIsFinished()
+{
+	return CurrentCommandAction.IsOnFinalFrame();
 }
 
 void ABaseAIController::SwitchInput()

@@ -12,6 +12,9 @@
 
 class ABaseFighter;
 
+class AFightingGameMode;
+
+UENUM(BlueprintType)
 enum EAIInputState
 {
 	Idle = 0,
@@ -24,8 +27,22 @@ USTRUCT(Blueprintable, BlueprintType)
 struct FAICommandAction
 {
 public:
+	
+	GENERATED_BODY()
 
+public:
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int MaxFrame;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TMap<int32, TEnumAsByte<EAIInputState>> InputActionList;
+
+	int CurrentFrame = 0;
+
+	void UpdateAction(ABaseAIController* controller);
+
+	bool IsOnFinalFrame();
 };
 
 /**
@@ -53,10 +70,30 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AttackPlayer();
 
+	UFUNCTION(BlueprintCallable)
 	void PressForward();
+	UFUNCTION(BlueprintCallable)
 	void PressBackward();
+	UFUNCTION(BlueprintCallable)
 	void PressUp();
+	UFUNCTION(BlueprintCallable)
 	void PressDown();
+	UFUNCTION(BlueprintCallable)
+	void PressLightPunch();
+	UFUNCTION(BlueprintCallable)
+	void PressLightKick();
+	/*UFUNCTION(BlueprintCallable)
+	void PressNoButton();*/
+
+	UFUNCTION(BlueprintCallable)
+	void SetInputState(EAIInputState InputState);
+
+	UFUNCTION(BlueprintCallable)
+	void SetNewCommand(FAICommandAction NewCommand);
+
+	UFUNCTION(BlueprintCallable)
+	bool CommandIsFinished();
+
 	/*void PressDownForward();
 	void PressDownBackward();
 	void PressUpForward();
@@ -69,14 +106,27 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Controller")
 	ABaseFighter* PossessedFighter;
 	
-	EAIInputState AIInputState;
+	UPROPERTY(BlueprintReadOnly)
+	AFightingGameMode* FightGameMode;
+
+	EAIInputState AIInputState = EAIInputState::Idle;
+
+	UPROPERTY(BlueprintReadWrite)
+	FAICommandAction CurrentCommandAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Controller")
+	FAICommandAction IdleCommand;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Controller")
+	FAICommandAction WalkCommand;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Controller")
+	FAICommandAction ComboCommand;
 
 private:
 
 	bool IsFacingRight;
 
 	APlayerController* PC;
-
 	UEnhancedInputLocalPlayerSubsystem* SubSystem;
 
 	UEnhancedPlayerInput* PlayerInput;
@@ -95,4 +145,7 @@ private:
 	UInputAction* LightKickInput;
 	UInputAction* MediumKickInput;
 	UInputAction* HeavyKickInput;
+
+	bool ForwardValue;
+	bool BackwardValue;
 };

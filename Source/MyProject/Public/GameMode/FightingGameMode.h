@@ -63,6 +63,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float MaxLevelSize;
+
+	UPROPERTY(BlueprintReadOnly)
+	float Distance;
 };
 
 UCLASS()
