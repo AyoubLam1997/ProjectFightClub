@@ -304,6 +304,17 @@ void ABaseFighter::ChangeState(UFightState* state)
 //	ChangeState(NewObject<UKnockbackStunState>());
 //}
 
+void ABaseFighter::ChangeToBlockState(float knockback, int duration)
+{
+	//ChangeState(NewObject<UKnockbackStunState>());
+
+	UBlockStunState* state = NewObject<UBlockStunState>();
+	//state->Init(1500, 400);
+	//m_State->NextState = state;
+	state->Init(duration, knockback);
+	ChangeState(state);
+}
+
 void ABaseFighter::ChangeToStunState(float knockback, int duration)
 {
 	//ChangeState(NewObject<UKnockbackStunState>());
@@ -364,6 +375,29 @@ void ABaseFighter::TakeDamage(float damage)
 	m_CurrentHealth -= damage;
 }
 
+bool ABaseFighter::IsHoldingBlock()
+{
+	bool IsHoldingBack = 0;
+
+	for (int i = 0; i < ReturnInputBuffer()->InputBufferItems.Num(); i++)
+	{
+		for (int j = 1; j < ReturnInputBuffer()->InputBufferItems[i]->Buffer.Num(); j++)
+		{
+			if(ReturnInputBuffer()->InputBufferItems[i]->InputDirection == ReturnBackwardInput())
+			{
+				if(ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0)
+				{
+					IsHoldingBack = 1;
+				}
+
+				break;
+			}
+		}
+	}
+
+	return IsHoldingBack;
+}
+
 bool ABaseFighter::InputCheck(EInputType input)
 {
 	for (int i = 0; i < ReturnInputBuffer()->InputBufferItems.Num(); i++)
@@ -372,7 +406,7 @@ bool ABaseFighter::InputCheck(EInputType input)
 		{
 			if (ReturnInputBuffer()->InputBufferItems[i]->InputDirection == input)
 			{
-				//DEV NOTE: 0 is the unnused state for the buffer. Start with 1 for input buffer check
+				//DEV NOTE: 0 is the unnused state for the buffer. Start with 1 for input buffer check. BUG!!! LOOK INTO THIS WHY IT HAPPENS IN UE5 & NOT IN UNITY!!!!
 				for (int j = 1; j < ReturnInputBuffer()->InputBufferItems[i]->Buffer.Num(); j++)
 				{
 					if (ReturnInputBuffer()->InputBufferItems[i]->Buffer[j].CanExecute())
@@ -652,4 +686,12 @@ USpecialMoveState* ABaseFighter::ReturnSpecialMove()
 	}*/
 
 	return nullptr;
+}
+
+bool ABaseFighter::IsInBlockState() const
+{
+	UBlockState* fightState = Cast<UBlockState>(m_State);
+	bool exists = (fightState != nullptr);
+
+	return exists;
 }

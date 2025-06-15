@@ -252,8 +252,8 @@ void UInputBuffer::UpdateMotion(bool right)
                     InputBufferItems[j]->Buffer[index].SetMotionTrue();
         }
 
-        if (MotionInputs[i]->MotionComplete() == true)
-            GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Motion completed"));
+        /*if (MotionInputs[i]->MotionComplete() == true)
+            GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Motion completed"));*/
     }
 }
 

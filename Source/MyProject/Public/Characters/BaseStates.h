@@ -250,6 +250,46 @@ private:
 };
 
 UCLASS(Blueprintable, BlueprintType)
+class MYPROJECT_API UBlockState : public UFightState
+{
+	GENERATED_BODY()
+public:
+
+	UBlockState() {};
+
+	int CurrentStunTime;
+
+	virtual void Enter(ABaseFighter& fighter) override {};
+	virtual UFightState* HandleInput(ABaseFighter& fighter) override { return nullptr; };
+	virtual void Update(ABaseFighter& fighter) override {};
+	virtual void Exit(ABaseFighter& fighter) override {};
+
+private:
+};
+
+UCLASS(Blueprintable, BlueprintType)
+class MYPROJECT_API UBlockStunState : public UBlockState
+{
+	GENERATED_BODY()
+public:
+
+	UBlockStunState() {};
+	UBlockStunState(int duration, float velocity);
+
+	void Init(int duration, float velocity);
+
+	float Pushback;
+	int StunDuration;
+
+	virtual void Enter(ABaseFighter& fighter) override;
+	virtual UFightState* HandleInput(ABaseFighter& fighter) override;
+	virtual void Update(ABaseFighter& fighter) override;
+	virtual void Exit(ABaseFighter& fighter) override;
+
+private:
+};
+
+UCLASS(Blueprintable, BlueprintType)
 class MYPROJECT_API UStunState : public UFightState
 {
 	GENERATED_BODY()
@@ -402,6 +442,11 @@ public:
 	FVector m_BoxPosition;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FVector m_BoxExtent;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float BlockKnockBack;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int BlockStunTime;
 
 	UPROPERTY(EditAnywhere)
 	UHitboxResponder* m_Responder;

@@ -231,11 +231,11 @@ void AFightingGameMode::AirToGroundCollisionCheck()
 
 		if(actors.Contains(bottom))
 		{
-			FString s = FString::SanitizeFloat(top->GetActorLocation().Z + top->m_FighterMesh->GetUnscaledBoxExtent().Z);
+			/*FString s = FString::SanitizeFloat(top->GetActorLocation().Z + top->m_FighterMesh->GetUnscaledBoxExtent().Z);
 			FString s2 = FString::SanitizeFloat(bottom->GetActorLocation().Z + bottom->m_FighterMesh->GetUnscaledBoxExtent().Z);
 
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, *s);
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, *s2);
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, *s2);*/
 
 			// TODO: Adjust distance based on the size of the pushbox & the distance between the fighters
 			if(top->GetActorLocation().Z == bottom->GetActorLocation().Z)

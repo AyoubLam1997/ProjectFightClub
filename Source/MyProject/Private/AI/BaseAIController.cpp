@@ -14,7 +14,7 @@ void FAICommandAction::UpdateAction(ABaseAIController* controller)
 		controller->SetInputState(InputActionList[CurrentFrame]);
 }
 
-bool FAICommandAction::IsOnFinalFrame()
+bool FAICommandAction::IsOnFinalFrame() const
 {
 	return CurrentFrame >= MaxFrame;
 }
@@ -70,6 +70,11 @@ void ABaseAIController::Tick(float dt)
 		case Walk:
 		{
 			PressForward();
+		}
+		break;
+		case Block:
+		{
+			PressBackward();
 		}
 		break;
 		case Attack:
@@ -177,6 +182,8 @@ void ABaseAIController::SetInputState(EAIInputState InputState)
 void ABaseAIController::SetNewCommand(FAICommandAction NewCommand)
 {
 	CurrentCommandAction = NewCommand;
+
+	CurrentCommandAction.CurrentFrame = 0;
 }
 
 

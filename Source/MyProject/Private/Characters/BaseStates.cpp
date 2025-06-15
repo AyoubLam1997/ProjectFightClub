@@ -627,6 +627,98 @@ void UBackwardJumpState::Exit(ABaseFighter& fighter)
 	fighter.SetActorLocation(loc);
 }
 
+UBlockStunState::UBlockStunState(int duration, float velocity)
+{
+	Pushback = velocity;
+	StunDuration = duration;
+
+	CurrentStunTime = 0;
+}
+
+void UBlockStunState::Init(int duration, float velocity)
+{
+	Pushback = velocity;
+	StunDuration = duration;
+
+	CurrentStunTime = 0;
+}
+
+void UBlockStunState::Enter(ABaseFighter& fighter)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Entering Block state"));
+
+	fighter.GetMesh()->PlayAnimation(fighter.Block, 0);
+
+	//m_Pushback = 400.f;
+
+	if (fighter.IsFacingRight())
+		Pushback *= -1;
+
+	fighter.GetCharacterMovement()->Velocity = FVector(0, Pushback, 0);
+}
+
+UFightState* UBlockStunState::HandleInput(ABaseFighter& fighter)
+{
+	if (CurrentStunTime >= StunDuration)
+	{
+		if (fighter.ReturnSpecialMoveByMotion() != nullptr)
+			return fighter.ReturnSpecialMoveByMotion();
+
+		if (fighter.ReturnInputBuffer()->MotionInputs[0]->MotionComplete())
+			return NewObject<UForwardDash>();
+
+		if (fighter.InputCheck(EInputType::LightPunch))
+			return DuplicateObject(fighter.m_LightPunch.GetDefaultObject(), nullptr);
+
+		for (int i = 0; i < fighter.ReturnInputBuffer()->InputBufferItems.Num(); i++)
+		{
+			if (fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer.Num() > 0)
+			{
+				for (int j = i + 1; j < fighter.ReturnInputBuffer()->InputBufferItems.Num(); j++)
+				{
+					if (i == j)
+						continue;
+
+					if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::Top && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0 &&
+						fighter.ReturnInputBuffer()->InputBufferItems[j]->InputDirection == fighter.ReturnForwardInput() && fighter.ReturnInputBuffer()->InputBufferItems[j]->Buffer[0].HoldTime > 0)
+						return NewObject<UForwardJumpState>();
+					if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::Top && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0 &&
+						fighter.ReturnInputBuffer()->InputBufferItems[j]->InputDirection == fighter.ReturnBackwardInput() && fighter.ReturnInputBuffer()->InputBufferItems[j]->Buffer[0].HoldTime > 0)
+						return NewObject<UBackwardJumpState>();
+				}
+
+				if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::Top && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0)
+					return NewObject<UNeutralJumpState>();
+
+				if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == fighter.ReturnForwardInput() && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0)
+					return NewObject<UForwardWalkState>();
+				if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == fighter.ReturnBackwardInput() && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0)
+					return NewObject<UBackwardWalkState>();
+			}
+		}
+
+		return NewObject<UGroundedState>();
+	}
+
+	return nullptr;
+}
+
+void UBlockStunState::Update(ABaseFighter& fighter)
+{
+	CurrentStunTime += 1;
+
+	//fighter.m_FighterMesh->SetPhysicsLinearVelocity(FVector(0, m_Pushback, 0));
+
+	fighter.GetCharacterMovement()->Velocity = FVector(0, Pushback, 0);
+}
+
+void UBlockStunState::Exit(ABaseFighter& fighter)
+{
+	//fighter.m_FighterMesh->SetPhysicsLinearVelocity(FVector::Zero());
+
+	fighter.GetCharacterMovement()->Velocity = FVector::Zero();
+}
+
 UKnockbackStunState::UKnockbackStunState()
 {
 	m_Pushback = 400.f;

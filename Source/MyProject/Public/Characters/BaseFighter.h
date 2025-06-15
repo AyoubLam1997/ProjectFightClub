@@ -92,6 +92,8 @@ public:
 	/*UFUNCTION(BlueprintCallable)
 	void ChangeToStunState();*/
 	UFUNCTION(BlueprintCallable)
+	void ChangeToBlockState(float knockback, int duration);
+	UFUNCTION(BlueprintCallable)
 	void ChangeToStunState(float knockback, int duration);
 	UFUNCTION(BlueprintCallable)
 	void ChangeToKnockbackState(float launch, float knockback);
@@ -113,6 +115,9 @@ public:
 	void SetFreezeTime(int duration);
 	UFUNCTION(BlueprintCallable)
 	void TakeDamage(float damage);
+
+	UFUNCTION(BlueprintCallable)
+	bool IsHoldingBlock();
 
 	UFUNCTION(BlueprintCallable)
 	bool InputCheck(EInputType input);
@@ -145,6 +150,8 @@ public:
 	bool IsAlive() const;
 	UFUNCTION(BlueprintCallable)
 	bool IsGrounded() const;
+	UFUNCTION(BlueprintCallable)
+	bool IsInBlockState() const;
 
 protected:
 	// Called when the game starts or when spawned
@@ -188,6 +195,8 @@ public:
 	UAnimSequence* StandingUp;
 	UPROPERTY(EditAnywhere, Category = "Default animations")
 	UAnimSequence* m_Stunned;
+	UPROPERTY(EditAnywhere, Category = "Default animations")
+	UAnimSequence* Block;
 	UPROPERTY(EditAnywhere, Category = "Default animations")
 	UAnimSequence* m_GrabStartUp;
 	UPROPERTY(EditAnywhere, Category = "Default animations")

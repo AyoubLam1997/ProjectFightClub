@@ -42,7 +42,7 @@ public:
 
 	void UpdateAction(ABaseAIController* controller);
 
-	bool IsOnFinalFrame();
+	bool IsOnFinalFrame() const;
 };
 
 /**
