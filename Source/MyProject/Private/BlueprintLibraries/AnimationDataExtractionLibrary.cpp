@@ -2,6 +2,7 @@
 
 
 #include "BlueprintLibraries/AnimationDataExtractionLibrary.h"
+#include "FileHelpers.h"
 
 int UAnimationDataExtractionLibrary::ConvertPositionToFrame(float maxDuration)
 {
@@ -79,7 +80,11 @@ void UAnimationDataExtractionLibrary::UpdateVectorProperty(UObject* object, cons
 				{
 					if(FVector* vect = prop->ContainerPtrToValuePtr<FVector>(default))
 					{
-						vect->Set(value.X, value.Y, value.Z);
+						*vect = value;
+
+						// NOTE: This needs to be done separately instead of here
+						UPackage* pack = default->GetPackage();
+						UEditorLoadingAndSavingUtils::SavePackages({ pack }, false);
 					}
 				}
 			}

@@ -60,6 +60,14 @@ UFightState* UGroundedState::HandleInput(ABaseFighter& fighter)
 			if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == fighter.ReturnBackwardInput() && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0)
 				return NewObject<UBackwardWalkState>();
 
+
+			if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::Down && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0)
+				return NewObject<UCrouchState>();
+			/*if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::DownRight && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0)
+				return NewObject<UCrouchState>();
+			if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::DownLeft && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0)
+				return NewObject<UCrouchState>();*/
+
 			/*if (fighter.m_BufferHandler->m_InputBufferItems[i]->InputDirection == EInputType::Top && fighter.m_BufferHandler->m_InputBufferItems[i]->m_Buffer[0].m_HoldTime > 0)
 				return new AirborneState(1500.f);
 			if (fighter.m_BufferHandler->m_InputBufferItems[i]->InputDirection == EInputType::MediumPunch && fighter.m_BufferHandler->m_InputBufferItems[i]->m_Buffer[0].m_HoldTime > 0)
@@ -166,34 +174,91 @@ void UCrouchState::Enter(ABaseFighter& fighter)
 
 UFightState* UCrouchState::HandleInput(ABaseFighter& fighter)
 {
+	bool downReleased = 0;
+
 	for (int i = 0; i < fighter.ReturnInputBuffer()->InputBufferItems.Num(); i++)
 	{
 		if (fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer.Num() > 0)
 		{
 			if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::Down && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime <= 0)
 				return NewObject<UGroundedState>();
+
+			/*if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::DownRight && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime <= 0)
+				downReleased = 1;
+			else
+			{
+				downReleased = 0;
+
+				break;
+			}
+			if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::DownLeft && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime <= 0)
+				downReleased = 1;
+			else
+			{
+				downReleased = 0;
+
+				break;
+			}*/
 		}
 	}
+
+	/*if(downReleased)
+		return NewObject<UGroundedState>();*/
+
+	/*if (!fighter.IsAlive())
+		return NewObject<ULayingState>();
+
+	if (!fighter.IsGrounded())
+		return NewObject<UAirborneState>();
+
+	if (fighter.ReturnSpecialMoveByMotion() != nullptr)
+		return fighter.ReturnSpecialMoveByMotion();
+
+	if (fighter.ReturnInputBuffer()->MotionInputs[0]->MotionComplete())
+		return NewObject<UForwardDash>();*/
+
+	if (fighter.InputCheck(EInputType::LightPunch))
+		return DuplicateObject(fighter.CrouchLightPunch.GetDefaultObject(), nullptr);
+
+	/*for (int i = 0; i < fighter.ReturnInputBuffer()->InputBufferItems.Num(); i++)
+	{
+		if (fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer.Num() > 0)
+		{
+			for (int j = i + 1; j < fighter.ReturnInputBuffer()->InputBufferItems.Num(); j++)
+			{
+				if (i == j)
+					continue;
+
+				if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::Top && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0 &&
+					fighter.ReturnInputBuffer()->InputBufferItems[j]->InputDirection == fighter.ReturnForwardInput() && fighter.ReturnInputBuffer()->InputBufferItems[j]->Buffer[0].HoldTime > 0)
+					return NewObject<UForwardJumpState>();
+				if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::Top && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0 &&
+					fighter.ReturnInputBuffer()->InputBufferItems[j]->InputDirection == fighter.ReturnBackwardInput() && fighter.ReturnInputBuffer()->InputBufferItems[j]->Buffer[0].HoldTime > 0)
+					return NewObject<UBackwardJumpState>();
+			}
+
+			if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::Top && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0)
+				return NewObject<UNeutralJumpState>();
+
+			if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == fighter.ReturnForwardInput() && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0)
+				return NewObject<UForwardWalkState>();
+			if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == fighter.ReturnBackwardInput() && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0)
+				return NewObject<UBackwardWalkState>();
+		}
+	}*/
 
 	return nullptr;
 }
 
 void UCrouchState::Update(ABaseFighter& fighter)
 {
-	//fighter.m_FighterMesh->SetPhysicsLinearVelocity(FVector::Zero());
+	fighter.RotateTowardsDirection();
 
-	fighter.GetCharacterMovement()->Velocity = FVector::Zero();
+	//fighter.m_FighterMesh->SetPhysicsLinearVelocity(FVector::Zero());
 
 	FVector loc = fighter.GetActorLocation();
 
 	loc.X = 0;
-
-	if (loc.Z != (0 + (fighter.m_FighterMesh->GetUnscaledBoxExtent().Z)))
-	{
-		loc.Z = 0 + (fighter.m_FighterMesh->GetUnscaledBoxExtent().Z);
-
-		fighter.SetActorLocation(loc);
-	}
 }
 
 void UCrouchState::Exit(ABaseFighter& fighter)
@@ -962,7 +1027,53 @@ void UGroundedAttackState::Enter(ABaseFighter& fighter)
 UFightState* UGroundedAttackState::HandleInput(ABaseFighter& fighter)
 {
 	if (fighter.GetMesh()->GetPosition() >= m_AnimationSequence->GetPlayLength())
+	{
+		if (fighter.ReturnSpecialMoveByMotion() != nullptr)
+			return fighter.ReturnSpecialMoveByMotion();
+
+		if (fighter.ReturnInputBuffer()->MotionInputs[0]->MotionComplete())
+			return NewObject<UForwardDash>();
+
+		if (fighter.InputCheck(EInputType::LightPunch))
+			return DuplicateObject(fighter.m_LightPunch.GetDefaultObject(), nullptr);
+
+		for (int i = 0; i < fighter.ReturnInputBuffer()->InputBufferItems.Num(); i++)
+		{
+			if (fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer.Num() > 0)
+			{
+				for (int j = i + 1; j < fighter.ReturnInputBuffer()->InputBufferItems.Num(); j++)
+				{
+					if (i == j)
+						continue;
+
+					if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::Top && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0 &&
+						fighter.ReturnInputBuffer()->InputBufferItems[j]->InputDirection == fighter.ReturnForwardInput() && fighter.ReturnInputBuffer()->InputBufferItems[j]->Buffer[0].HoldTime > 0)
+						return NewObject<UForwardJumpState>();
+					if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::Top && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0 &&
+						fighter.ReturnInputBuffer()->InputBufferItems[j]->InputDirection == fighter.ReturnBackwardInput() && fighter.ReturnInputBuffer()->InputBufferItems[j]->Buffer[0].HoldTime > 0)
+						return NewObject<UBackwardJumpState>();
+				}
+
+				if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::Top && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0)
+					return NewObject<UNeutralJumpState>();
+
+				if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == fighter.ReturnForwardInput() && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0)
+					return NewObject<UForwardWalkState>();
+				if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == fighter.ReturnBackwardInput() && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0)
+					return NewObject<UBackwardWalkState>();
+
+
+				if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::Down && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0)
+					return NewObject<UCrouchState>();
+				if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::DownRight && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0)
+					return NewObject<UCrouchState>();
+				if (fighter.ReturnInputBuffer()->InputBufferItems[i]->InputDirection == EInputType::DownLeft && fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer[0].HoldTime > 0)
+					return NewObject<UCrouchState>();
+			}
+		}
+
 		return NewObject<UGroundedState>();
+	}
 
 	return AttackStateHandleInput(&fighter);
 }

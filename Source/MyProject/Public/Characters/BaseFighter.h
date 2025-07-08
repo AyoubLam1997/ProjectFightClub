@@ -218,6 +218,20 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Normal attacks")
 	TSubclassOf<UGroundedAttackState> m_HeavyKick;
 
+
+	UPROPERTY(EditAnywhere, Category = "Normal attacks")
+	TSubclassOf<UGroundedAttackState> CrouchLightPunch;
+	UPROPERTY(EditAnywhere, Category = "Normal attacks")
+	TSubclassOf<UGroundedAttackState> CrouchMediumPunch;
+	UPROPERTY(EditAnywhere, Category = "Normal attacks")
+	TSubclassOf<UGroundedAttackState> CrouchHeavyPunch;
+	UPROPERTY(EditAnywhere, Category = "Normal attacks")
+	TSubclassOf<UGroundedAttackState> CrouchLightKick;
+	UPROPERTY(EditAnywhere, Category = "Normal attacks")
+	TSubclassOf<UGroundedAttackState> CrouchMediumKick;
+	UPROPERTY(EditAnywhere, Category = "Normal attacks")
+	TSubclassOf<UGroundedAttackState> CrouchHeavyKick;
+
 	UPROPERTY(EditAnywhere, Category = "Special moves")
 	TArray <FSpecialMoves> m_SpecialMoves;
 

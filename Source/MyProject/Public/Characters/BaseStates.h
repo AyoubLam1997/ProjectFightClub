@@ -434,7 +434,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int m_MinFrame;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int m_MaxFrame;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int m_FreezeTime;
