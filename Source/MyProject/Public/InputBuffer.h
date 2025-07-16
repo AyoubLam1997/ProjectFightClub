@@ -50,7 +50,7 @@ public:
 	TArray<EInputType> MotionInputs;
 
 	int BufferTime;
-	int IndexCheck;
+	int IndexCheck = 0;
 
 	bool MotionUsed;
 

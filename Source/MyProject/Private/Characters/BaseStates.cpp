@@ -484,6 +484,7 @@ void UAirborneState::Enter(ABaseFighter& fighter)
 	//fighter.m_FighterMesh->SetEnableGravity(1);
 	//fighter.m_FighterMesh->SetPhysicsLinearVelocity(FVector(0, 0, m_CurrentFallVelocity));
 
+	fighter.GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 	fighter.GetCharacterMovement()->Velocity = FVector(0, 0, m_CurrentFallVelocity);
 }
 
@@ -506,11 +507,14 @@ void UAirborneState::Update(ABaseFighter& fighter)
 
 	//fighter.m_FighterMesh->SetPhysicsLinearVelocity(FVector(0, 0, m_CurrentFallVelocity));
 	fighter.GetCharacterMovement()->Velocity = FVector(0, 0, m_CurrentFallVelocity);
+	fighter.AirCollisionCheck();
 }
 
 void UAirborneState::Exit(ABaseFighter& fighter)
 {
 	fighter.GetCharacterMovement()->Velocity = FVector::Zero();
+
+	fighter.GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 
 	auto loc = fighter.GetActorLocation();
 
@@ -548,12 +552,14 @@ void UNeutralJumpState::Update(ABaseFighter& fighter)
 
 	//fighter.m_FighterMesh->SetPhysicsLinearVelocity(FVector(0, 0, m_CurrentFallVelocity));
 	fighter.GetCharacterMovement()->Velocity = FVector(0, 0, m_CurrentFallVelocity);
+	fighter.AirCollisionCheck();
 }
 
 void UNeutralJumpState::Exit(ABaseFighter& fighter)
 {
 	fighter.GetCharacterMovement()->Velocity = FVector::Zero();
 
+	fighter.GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 	auto loc = fighter.GetActorLocation();
 
 	loc.Z = 0;
@@ -590,6 +596,7 @@ void UForwardJumpState::Enter(ABaseFighter& fighter)
 	//fighter.m_FighterMesh->SetPhysicsLinearVelocity(FVector(0, m_ForwardVelocity, m_CurrentFallVelocity));
 
 	fighter.GetCharacterMovement()->Velocity = FVector(0, m_ForwardVelocity, m_CurrentFallVelocity);
+	fighter.GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 }
 
 UFightState* UForwardJumpState::HandleInput(ABaseFighter& fighter)
@@ -612,12 +619,14 @@ void UForwardJumpState::Update(ABaseFighter& fighter)
 	//fighter.m_FighterMesh->SetPhysicsLinearVelocity(FVector(0, m_ForwardVelocity, m_CurrentFallVelocity));
 
 	fighter.GetCharacterMovement()->Velocity = FVector(0, m_ForwardVelocity, m_CurrentFallVelocity);
+	fighter.AirCollisionCheck();
 }
 
 void UForwardJumpState::Exit(ABaseFighter& fighter)
 {
 	fighter.GetCharacterMovement()->Velocity = FVector::Zero();
 
+	fighter.GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 
 	auto loc = fighter.GetActorLocation();
 
@@ -654,6 +663,7 @@ void UBackwardJumpState::Enter(ABaseFighter& fighter)
 	//fighter.m_FighterMesh->SetEnableGravity(1);
 
 	fighter.GetCharacterMovement()->Velocity = FVector(0, m_BackwardVelocity, m_CurrentFallVelocity);
+	fighter.GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 }
 
 UFightState* UBackwardJumpState::HandleInput(ABaseFighter& fighter)
@@ -676,6 +686,7 @@ void UBackwardJumpState::Update(ABaseFighter& fighter)
 	//fighter.m_FighterMesh->SetPhysicsLinearVelocity(FVector(0, m_BackwardVelocity, m_CurrentFallVelocity));
 
 	fighter.GetCharacterMovement()->Velocity = FVector(0, m_BackwardVelocity, m_CurrentFallVelocity);
+	fighter.AirCollisionCheck();
 }
 
 void UBackwardJumpState::Exit(ABaseFighter& fighter)
@@ -684,6 +695,8 @@ void UBackwardJumpState::Exit(ABaseFighter& fighter)
 	//fighter.m_FighterMesh->SetEnableGravity(0);
 
 	fighter.GetCharacterMovement()->Velocity = FVector::Zero();
+	
+	fighter.GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 
 	auto loc = fighter.GetActorLocation();
 	
@@ -877,6 +890,7 @@ void UAirStunState::Enter(ABaseFighter& fighter)
 	fighter.GetMesh()->PlayAnimation(fighter.m_FallBlend, 1);
 	FVector BlendParams(0, m_CurrentFallVelocity, 0);
 	fighter.GetMesh()->GetSingleNodeInstance()->SetBlendSpacePosition(BlendParams);
+	fighter.GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 }
 
 UFightState* UAirStunState::HandleInput(ABaseFighter& fighter)
@@ -904,6 +918,7 @@ void UAirStunState::Update(ABaseFighter& fighter)
 
 	FVector BlendParams(0, m_CurrentFallVelocity, 0);
 	fighter.GetMesh()->GetSingleNodeInstance()->SetBlendSpacePosition(BlendParams);
+	fighter.AirCollisionCheck();
 }
 
 void UAirStunState::Exit(ABaseFighter& fighter)
@@ -911,6 +926,7 @@ void UAirStunState::Exit(ABaseFighter& fighter)
 	//fighter.m_FighterMesh->SetPhysicsLinearVelocity(FVector::Zero());
 
 	fighter.GetCharacterMovement()->Velocity = FVector::Zero();
+	fighter.GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 }
 
 UGrabStartupState::UGrabStartupState()

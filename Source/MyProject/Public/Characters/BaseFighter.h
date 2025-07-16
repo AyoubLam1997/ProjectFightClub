@@ -89,6 +89,8 @@ public:
 
 	void ChangeState(UFightState* state);
 
+	void AirCollisionCheck();
+
 	/*UFUNCTION(BlueprintCallable)
 	void ChangeToStunState();*/
 	UFUNCTION(BlueprintCallable)
@@ -171,6 +173,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* m_FighterMesh;
+
+	UPROPERTY(EditAnywhere)
+	UBoxComponent* Pushbox;
 
 	/*UPROPERTY(EditAnywhere)
 	USkeletalMeshComponent* m_SkeletalMesh;*/

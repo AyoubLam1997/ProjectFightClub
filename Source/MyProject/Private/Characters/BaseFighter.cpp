@@ -35,6 +35,9 @@ ABaseFighter::ABaseFighter()
 	
 	m_FighterMesh = CreateDefaultSubobject<UBoxComponent>(TEXT("FighterMesh"));
 	m_FighterMesh->SetupAttachment(GetMesh());
+
+	Pushbox = CreateDefaultSubobject<UBoxComponent>(TEXT("Pushbox"));
+	Pushbox->SetupAttachment(GetMesh());
 	//RootComponent = comp;
 	//m_FighterMesh->SetupAttachment(comp);
 
@@ -93,6 +96,8 @@ void ABaseFighter::BeginPlay()
 		m_SpecialMoves[i].Init();
 		m_BufferHandler->MotionInputs.Add(&m_SpecialMoves[i].m_MotionInput);
 	}
+
+	Pushbox->RegisterComponentWithWorld(GetWorld());
 
 	//m_FighterMesh->OnComponentHit.AddDynamic(this, &ABaseFighter::OnHit);
 	//Movement = FindComponentByClass<UCharacterMovementComponent>();
@@ -269,6 +274,67 @@ void ABaseFighter::RotateTowardsDirection()
 	else if (!m_FacingRight)
 	{
 		GetCapsuleComponent()->SetWorldScale3D(FVector(1, -1, 1));
+	}
+}
+
+void ABaseFighter::AirCollisionCheck()
+{
+	TArray<AActor*> actors;
+
+	Pushbox->GetOverlappingActors(actors);
+
+	GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Blue, TEXT("Checking collision"));
+
+	if (actors.Num() > 0)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Collision has been detected"));
+
+		ABaseFighter* other = Cast<ABaseFighter>(actors[0]);
+
+		if (other == nullptr)
+			return;
+
+		double direction = GetActorLocation().Y - other->GetActorLocation().Y;
+
+		double total = Pushbox->GetUnscaledBoxExtent().Y + other->Pushbox->GetUnscaledBoxExtent().Y;
+
+		FVector v = FVector(0, total, 0);
+
+		double length = v.Length();
+
+		double lengthSquared = sqrt(length);
+
+		v.Normalize();
+
+		double depth = total - lengthSquared;
+
+		double penetration = v.Y / depth;
+
+		double distance = (depth / 2.0) * v.Y;
+
+		if (m_FacingRight)
+		{
+			SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y - distance, GetActorLocation().Z));
+		}
+		else if (!m_FacingRight)
+		{
+			SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y + distance, GetActorLocation().Z));
+		}
+
+		/*double boxSize = Pushbox->GetUnscaledBoxExtent().Y;
+
+		double z = boxSize;
+
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::SanitizeFloat(z));
+
+		if (m_FacingRight)
+		{
+			SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y - z, GetActorLocation().Z));
+		}
+		else if (!m_FacingRight)
+		{
+			SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y + z, GetActorLocation().Z));
+		}*/
 	}
 }
 
