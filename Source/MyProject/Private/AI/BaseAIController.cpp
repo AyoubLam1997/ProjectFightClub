@@ -39,6 +39,7 @@ void ABaseAIController::InitializeController(ABaseFighter* fighter)
 	LeftInput = PossessedFighter->Left;
 	LightPunchInput = PossessedFighter->LightPunch;
 	LightKickInput = PossessedFighter->LightKick;
+	UpInput = PossessedFighter->Up;
 
 	IsFacingRight = PossessedFighter->IsFacingRight();
 
@@ -80,6 +81,10 @@ void ABaseAIController::Tick(float dt)
 		case Attack:
 		{
 			PressLightPunch();
+		}
+		case Jump:
+		{
+			PressUp();
 		}
 		break;
 
@@ -142,8 +147,8 @@ void ABaseAIController::PressUp()
 {
 	if (PossessedFighter != nullptr)
 	{
-		//FInputActionValue ActionValue(true); // This can be a bool, float, FVector2D, or FVector
-		//PlayerInput->InjectInputForAction(UpInput, ActionValue);
+		FInputActionValue ActionValue(true); // This can be a bool, float, FVector2D, or FVector
+		PlayerInput->InjectInputForAction(UpInput, ActionValue);
 	}
 }
 

@@ -443,6 +443,12 @@ void ABaseFighter::TakeDamage(float damage)
 
 bool ABaseFighter::IsHoldingBlock()
 {
+	UGroundedState* fightState = Cast<UGroundedState>(m_State);
+	bool exists = (fightState != nullptr);
+
+	if (!exists)
+		return 0;
+
 	bool IsHoldingBack = 0;
 
 	for (int i = 0; i < ReturnInputBuffer()->InputBufferItems.Num(); i++)

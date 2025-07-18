@@ -20,7 +20,8 @@ enum EAIInputState
 	Idle = 0,
 	Walk,
 	Block,
-	Attack
+	Attack,
+	Jump,
 };
 
 USTRUCT(Blueprintable, BlueprintType)

@@ -418,6 +418,7 @@ private:
 	ABaseFighter* m_EnemyFighter;
 };
 
+// TODO: Remove GroundedState property
 UCLASS(Blueprintable, BlueprintType)
 class MYPROJECT_API UGroundedAttackState : public UGroundedState
 {
