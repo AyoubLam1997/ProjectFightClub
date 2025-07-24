@@ -10,7 +10,7 @@ public class MyProject : ModuleRules
 
 		bUseRTTI = true;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "UnrealEd" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "UnrealEd", "Niagara" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

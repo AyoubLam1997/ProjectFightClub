@@ -10,6 +10,23 @@
 
 class HitboxHandler;
 
+//USTRUCT(Blueprintable, BlueprintType)
+//struct UCollisionData
+//{
+//	GENERATED_BODY()
+//
+//public:
+//
+//	UFUNCTION(BlueprintCallable)
+//	FVector PointOfContact;
+//
+//	UFUNCTION(BlueprintCallable)
+//	bool IsGrounded;
+//
+//	UFUNCTION(BlueprintCallable)
+//	bool IsBlocking;
+//};
+
 // Colliding states of a hitbox
 enum class ColliderState
 {
@@ -99,4 +116,6 @@ private:
 	TArray<AActor*> m_CollidedObjects;
 
 	ColliderState m_ColliderState;
+
+	FVector CollisionPoint;
 };

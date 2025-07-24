@@ -38,6 +38,9 @@ ABaseFighter::ABaseFighter()
 
 	Pushbox = CreateDefaultSubobject<UBoxComponent>(TEXT("Pushbox"));
 	Pushbox->SetupAttachment(GetMesh());
+
+	//NiagaraComponentEffectToPlay = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Hit VFX"));
+
 	//RootComponent = comp;
 	//m_FighterMesh->SetupAttachment(comp);
 
@@ -644,6 +647,13 @@ void ABaseFighter::StopInput()
 	}
 	else
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("No input to disable"));
+}
+
+void ABaseFighter::PlayDefaultHitEffect(FVector position, FRotator rotation)
+{
+	//NiagaraComponentEffectToPlay->SetWorldLocationAndRotation(position, rotation);
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NiagaraComponentEffectToPlay, position, rotation);
+	//NiagaraComponentEffectToPlay->Activate();
 }
 
 // TODO: Fix stutter look when players collide during the check

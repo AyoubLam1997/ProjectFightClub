@@ -22,6 +22,9 @@
 #include "Collision/UHitbox.h"
 #include "Collision/HitboxHandler.h"
 
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
+
 #include "BaseFighter.generated.h"
 
 //TODO: ADJUST THIS TO TRANSITION TO ANY DESIRED STATE (THAT MAKES USE OF THE DATA TABLES)
@@ -129,6 +132,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	const bool HasHitEnemy();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayDefaultHitEffect(FVector position, FRotator rotation);
 
 	UFUNCTION(BlueprintCallable)
 	UGroundedAttackState* ReturnAttackState();
@@ -259,6 +265,9 @@ public:
 	UInputAction* LightKick;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enhanced Input")
 	UInputAction* Up;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hit VFX")
+	UNiagaraSystem* NiagaraComponentEffectToPlay;
 
 	USpecialMoveState* ReturnSpecialMove();
 
