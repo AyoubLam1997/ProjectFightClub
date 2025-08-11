@@ -14,8 +14,8 @@ void AFightingGameMode::BeginPlay()
 {
 	//UWorld::GetFirstLocalPlayerFromController();
 
-	FVector pos1 = FVector(0, -125, 0);
-	FVector pos2 = FVector(0, 125, 0);
+	FVector pos1 = FVector(0, -175, 0);
+	FVector pos2 = FVector(0, 175, 0);
 	FRotator rot1 = FRotator(0, 0, 0);
 	FActorSpawnParameters SpawnInfo = FActorSpawnParameters(); 
 	SpawnInfo.bNoFail = true;
@@ -54,7 +54,7 @@ void AFightingGameMode::BeginPlay()
 
 	FVector cameraPos = FVector(-500, y, 90);
 
-	FTransform transform(FRotator{ -5.f, 0.f, 0.f }, cameraPos, FVector{ 1.f, 1.f, 1.f });
+	FTransform transform(FRotator{ 0.f, 0.f, 0.f }, cameraPos, FVector{ 1.f, 1.f, 1.f });
 	UWorld* poWorld = GetWorld();
 	m_Camera = poWorld->SpawnActor<ACameraActor>();
 	m_Camera->SetActorTransform(transform);
@@ -138,28 +138,28 @@ void AFightingGameMode::Tick(float DeltaTime)
 
 	Distance = fabsf(loc1.Y - loc2.Y);
 
-	if(Distance > 2600.f)
+	if(Distance > 2400.f)
 	{
 		if (loc1.Y >= loc2.Y)
 		{
-			loc1.Y = m_Camera->GetActorLocation().Y + 1300.f;
-			loc2.Y = m_Camera->GetActorLocation().Y - 1300.f;
+			loc1.Y = m_Camera->GetActorLocation().Y + 1200.f;
+			loc2.Y = m_Camera->GetActorLocation().Y - 1200.f;
 		}
 		else if (loc1.Y <= loc2.Y)
 		{
-			loc1.Y = m_Camera->GetActorLocation().Y - 1300.f;
-			loc2.Y = m_Camera->GetActorLocation().Y + 1300.f;
+			loc1.Y = m_Camera->GetActorLocation().Y - 1200.f;
+			loc2.Y = m_Camera->GetActorLocation().Y + 1200.f;
 		}
 	}
 
-	if (loc1.Y > 1200.f)
-		loc1.Y = 1200.f;
-	if (loc1.Y < -1200.f)
-		loc1.Y = -1200.f;
-	if (loc2.Y > 1200.f)
-		loc2.Y = 1200.f;
-	if (loc2.Y < -1200.f)
-		loc2.Y = -1200.f;
+	if (loc1.Y > 1000.f)
+		loc1.Y = 1000.f;
+	if (loc1.Y < -1000.f)
+		loc1.Y = -1000.f;
+	if (loc2.Y > 1000.f)
+		loc2.Y = 1000.f;
+	if (loc2.Y < -1000.f)
+		loc2.Y = -1000.f;
 
 	m_P1Fighter->SetActorLocation(loc1);
 	m_P2Fighter->SetActorLocation(loc2);
@@ -170,7 +170,7 @@ void AFightingGameMode::Tick(float DeltaTime)
 	{
 		float y = (m_P1Fighter->GetActorLocation().Y + m_P2Fighter->GetActorLocation().Y) / 2.f;
 
-		FVector cameraPos = FVector(-500, y, 90);
+		FVector cameraPos = FVector(-400, y, 90);
 
 		m_Camera->SetActorLocation(cameraPos);
 	}
@@ -178,13 +178,13 @@ void AFightingGameMode::Tick(float DeltaTime)
 	{
 		if (totalLocY < -MaxLevelSize)
 		{
-			FVector cameraPos = FVector(-500, -MaxLevelSize, 90);
+			FVector cameraPos = FVector(-400, -MaxLevelSize, 90);
 
 			m_Camera->SetActorLocation(cameraPos);
 		}
 		else if (totalLocY > MaxLevelSize)
 		{
-			FVector cameraPos = FVector(-500, MaxLevelSize, 90);
+			FVector cameraPos = FVector(-400, MaxLevelSize, 90);
 
 			m_Camera->SetActorLocation(cameraPos);
 		}

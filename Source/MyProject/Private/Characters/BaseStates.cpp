@@ -498,7 +498,7 @@ UFightState* UAirborneState::HandleInput(ABaseFighter& fighter)
 
 void UAirborneState::Update(ABaseFighter& fighter)
 {
-	m_CurrentFallVelocity -= 50.f;
+	m_CurrentFallVelocity -= 25.f;
 
 	if (m_CurrentFallVelocity > m_MaxFallVelocity)
 		m_CurrentFallVelocity = m_MaxFallVelocity;
@@ -527,7 +527,7 @@ void UNeutralJumpState::Enter(ABaseFighter& fighter)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Entering neutral jump state"));
 
-	m_CurrentFallVelocity = 1500.f;
+	m_CurrentFallVelocity = 850.f;
 
 	//fighter.m_FighterMesh->SetEnableGravity(1);
 	UAirborneState::Enter(fighter);
@@ -543,7 +543,7 @@ UFightState* UNeutralJumpState::HandleInput(ABaseFighter& fighter)
 
 void UNeutralJumpState::Update(ABaseFighter& fighter)
 {
-	m_CurrentFallVelocity -= 50.f;
+	m_CurrentFallVelocity -= 25.f;
 
 	if (m_CurrentFallVelocity > m_MaxFallVelocity)
 		m_CurrentFallVelocity = m_MaxFallVelocity;
@@ -587,7 +587,7 @@ void UForwardJumpState::Enter(ABaseFighter& fighter)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Entering forward jump state"));
 
-	m_CurrentFallVelocity = 1500.f;
+	m_CurrentFallVelocity = 850.f;
 
 	if (!fighter.IsFacingRight())
 		m_ForwardVelocity *= -1;
@@ -609,7 +609,7 @@ UFightState* UForwardJumpState::HandleInput(ABaseFighter& fighter)
 
 void UForwardJumpState::Update(ABaseFighter& fighter)
 {
-	m_CurrentFallVelocity -= 50.f;
+	m_CurrentFallVelocity -= 25.f;
 
 	if (m_CurrentFallVelocity > m_MaxFallVelocity)
 		m_CurrentFallVelocity = m_MaxFallVelocity;
@@ -655,7 +655,7 @@ void UBackwardJumpState::Enter(ABaseFighter& fighter)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Entering forward jump state"));
 
-	m_CurrentFallVelocity = 1500.f;
+	m_CurrentFallVelocity = 850.f;
 
 	if (!fighter.IsFacingRight())
 		m_BackwardVelocity *= -1;
@@ -676,7 +676,7 @@ UFightState* UBackwardJumpState::HandleInput(ABaseFighter& fighter)
 
 void UBackwardJumpState::Update(ABaseFighter& fighter)
 {
-	m_CurrentFallVelocity -= 50.f;
+	m_CurrentFallVelocity -= 25.f;
 
 	if (m_CurrentFallVelocity > m_MaxFallVelocity)
 		m_CurrentFallVelocity = m_MaxFallVelocity;
