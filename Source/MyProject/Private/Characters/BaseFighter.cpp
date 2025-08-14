@@ -317,11 +317,11 @@ void ABaseFighter::AirCollisionCheck()
 
 		if (m_FacingRight)
 		{
-			SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y - distance, GetActorLocation().Z));
+			SetActorLocation(FVector(GetActorLocation().X, other->GetActorLocation().Y - (total), GetActorLocation().Z));
 		}
 		else if (!m_FacingRight)
 		{
-			SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y + distance, GetActorLocation().Z));
+			SetActorLocation(FVector(GetActorLocation().X, other->GetActorLocation().Y + (total), GetActorLocation().Z));
 		}
 
 		/*double boxSize = Pushbox->GetUnscaledBoxExtent().Y;
@@ -564,6 +564,16 @@ bool ABaseFighter::IsAlive() const
 		return 1;
 
 	return 0;
+}
+
+float ABaseFighter::GetJumpForce() const
+{
+	return JumpForce;
+}
+
+float ABaseFighter::GetJumpMoveForce() const
+{
+	return JumpMoveForce;
 }
 
 bool ABaseFighter::IsFacingRight() const

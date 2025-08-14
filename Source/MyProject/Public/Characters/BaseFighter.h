@@ -62,6 +62,11 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float m_BackwardWalkSpeed;
 
+	UPROPERTY(EditAnywhere)
+	float JumpForce;
+	UPROPERTY(EditAnywhere)
+	float JumpMoveForce;
+
 	UPROPERTY(BlueprintReadOnly)
 	float m_CurrentHealth;
 
@@ -150,6 +155,12 @@ public:
 
 	EInputType ReturnForwardInput();
 	EInputType ReturnBackwardInput();
+
+	UFUNCTION(BlueprintCallable)
+	float GetJumpForce() const;
+
+	UFUNCTION(BlueprintCallable)
+	float GetJumpMoveForce() const;
 
 	UFUNCTION(BlueprintCallable)
 	bool IsFacingRight() const;

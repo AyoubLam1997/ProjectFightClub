@@ -527,8 +527,9 @@ void UNeutralJumpState::Enter(ABaseFighter& fighter)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Entering neutral jump state"));
 
-	m_CurrentFallVelocity = 850.f;
+	//m_CurrentFallVelocity = 850.f;
 
+	m_CurrentFallVelocity = fighter.GetJumpForce();
 	//fighter.m_FighterMesh->SetEnableGravity(1);
 	UAirborneState::Enter(fighter);
 }
@@ -587,7 +588,9 @@ void UForwardJumpState::Enter(ABaseFighter& fighter)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Entering forward jump state"));
 
-	m_CurrentFallVelocity = 850.f;
+	m_CurrentFallVelocity = fighter.GetJumpForce();
+
+	m_ForwardVelocity = fighter.GetJumpMoveForce();
 
 	if (!fighter.IsFacingRight())
 		m_ForwardVelocity *= -1;
@@ -655,7 +658,9 @@ void UBackwardJumpState::Enter(ABaseFighter& fighter)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Entering forward jump state"));
 
-	m_CurrentFallVelocity = 850.f;
+	m_CurrentFallVelocity = fighter.GetJumpForce();
+
+	m_BackwardVelocity = -fighter.GetJumpMoveForce();
 
 	if (!fighter.IsFacingRight())
 		m_BackwardVelocity *= -1;
