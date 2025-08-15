@@ -34,10 +34,10 @@ ABaseFighter::ABaseFighter()
 	RootComponent = comp;*/
 	
 	m_FighterMesh = CreateDefaultSubobject<UBoxComponent>(TEXT("FighterMesh"));
-	m_FighterMesh->SetupAttachment(GetMesh());
+	m_FighterMesh->SetupAttachment(GetCapsuleComponent());
 
 	Pushbox = CreateDefaultSubobject<UBoxComponent>(TEXT("Pushbox"));
-	Pushbox->SetupAttachment(GetMesh());
+	Pushbox->SetupAttachment(GetCapsuleComponent());
 
 	//NiagaraComponentEffectToPlay = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Hit VFX"));
 
@@ -297,11 +297,11 @@ void ABaseFighter::AirCollisionCheck()
 		if (other == nullptr)
 			return;
 
-		double direction = GetActorLocation().Y - other->GetActorLocation().Y;
+		//double direction = GetActorLocation().Y - other->GetActorLocation().Y;
 
 		double total = Pushbox->GetUnscaledBoxExtent().Y + other->Pushbox->GetUnscaledBoxExtent().Y;
 
-		FVector v = FVector(0, total, 0);
+		/*FVector v = FVector(0, total, 0);
 
 		double length = v.Length();
 
@@ -313,7 +313,7 @@ void ABaseFighter::AirCollisionCheck()
 
 		double penetration = v.Y / depth;
 
-		double distance = (depth / 2.0) * v.Y;
+		double distance = (depth / 2.0) * v.Y;*/
 
 		if (m_FacingRight)
 		{

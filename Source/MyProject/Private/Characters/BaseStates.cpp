@@ -1111,7 +1111,7 @@ void UGroundedAttackState::Update(ABaseFighter& fighter)
 
 	if (m_CurrentFrame == m_MinFrame)
 	{
-		fighter.m_Hitbox->SetRelativeLocation(m_BoxPosition);
+		fighter.m_Hitbox->SetRelativeLocation(m_BoxPosition - FVector(0, 0, fighter.GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight() / 2.f));
 		fighter.m_Hitbox->SetBoxExtent(m_BoxExtent);
 		fighter.m_Hitbox->OpenColliderState();
 	}
