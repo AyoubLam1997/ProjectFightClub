@@ -4,6 +4,7 @@
 #include "GameMode/FightingGameMode.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "AI/AIFighterControllerPawn.h"
@@ -172,7 +173,15 @@ void AFightingGameMode::Tick(float DeltaTime)
 
 		FVector cameraPos = FVector(-400, y, 90);
 
-		m_Camera->SetActorLocation(cameraPos);
+		if(m_P1Fighter->GetActorLocation().Z > 90.f || m_P2Fighter->GetActorLocation().Z > 90.f)
+		{
+			float z = (m_P1Fighter->GetActorLocation().Z + m_P2Fighter->GetActorLocation().Z) / 2.f;
+			cameraPos.Z = z;
+		}
+
+		FVector TweenPos = FMath::VInterpTo(m_Camera->GetActorLocation(), cameraPos, DeltaTime, 2.f);
+
+		m_Camera->SetActorLocation(TweenPos);
 	}
 	else
 	{
@@ -180,16 +189,38 @@ void AFightingGameMode::Tick(float DeltaTime)
 		{
 			FVector cameraPos = FVector(-400, -MaxLevelSize, 90);
 
-			m_Camera->SetActorLocation(cameraPos);
+			if (m_P1Fighter->GetActorLocation().Z > 90.f || m_P2Fighter->GetActorLocation().Z > 90.f)
+			{
+				float z = (m_P1Fighter->GetActorLocation().Z + m_P2Fighter->GetActorLocation().Z) / 2.f;
+				cameraPos.Z = z;
+			}
+
+			FVector TweenPos = FMath::VInterpTo(m_Camera->GetActorLocation(), cameraPos, DeltaTime, 2.f);
+
+			m_Camera->SetActorLocation(TweenPos);
 		}
 		else if (totalLocY > MaxLevelSize)
 		{
 			FVector cameraPos = FVector(-400, MaxLevelSize, 90);
 
-			m_Camera->SetActorLocation(cameraPos);
+			if (m_P1Fighter->GetActorLocation().Z > 90.f || m_P2Fighter->GetActorLocation().Z > 90.f)
+			{
+				float z = (m_P1Fighter->GetActorLocation().Z + m_P2Fighter->GetActorLocation().Z) / 2.f;
+				cameraPos.Z = z;
+			}
+
+			FVector TweenPos = FMath::VInterpTo(m_Camera->GetActorLocation(), cameraPos, DeltaTime, 2.f);
+
+			m_Camera->SetActorLocation(TweenPos);
 		}
 	}
 
+	/*FRotator p1Rot = UKismetMathLibrary::FindLookAtRotation(m_P1Fighter->GetMesh()->GetComponentLocation(), m_Camera->GetActorLocation());
+	FRotator p2Rot = UKismetMathLibrary::FindLookAtRotation(m_P2Fighter->GetMesh()->GetComponentLocation(), m_Camera->GetActorLocation());
+
+	m_P1Fighter->GetMesh()->SetWorldRotation(FRotator(0, p1Rot.Pitch, 0));
+	m_P2Fighter->GetMesh()->SetWorldRotation(p2Rot);*/
+	
 	//AirToGroundCollisionCheck();
 }
 
