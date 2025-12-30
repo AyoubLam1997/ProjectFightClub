@@ -12,7 +12,7 @@
 void UGroundedState::Enter(ABaseFighter& fighter)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Entering default state"));
-	fighter.GetMesh()->PlayAnimation(fighter.m_Idle, 1);
+	fighter.GetMesh()->SetAnimation(fighter.m_Idle);
 }
 
 UFightState* UGroundedState::HandleInput(ABaseFighter& fighter)
@@ -169,13 +169,11 @@ void UGroundedState::Exit(ABaseFighter& fighter)
 void UCrouchState::Enter(ABaseFighter& fighter)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Entering crouch state"));
-	fighter.GetMesh()->PlayAnimation(fighter.m_Crouch, 1);
+	fighter.GetMesh()->SetAnimation(fighter.m_Crouch);
 }
 
 UFightState* UCrouchState::HandleInput(ABaseFighter& fighter)
 {
-	bool downReleased = 0;
-
 	for (int i = 0; i < fighter.ReturnInputBuffer()->InputBufferItems.Num(); i++)
 	{
 		if (fighter.ReturnInputBuffer()->InputBufferItems[i]->Buffer.Num() > 0)
@@ -281,7 +279,7 @@ void ULayingState::Enter(ABaseFighter& fighter)
 	//fighter.m_FighterMesh->SetPhysicsLinearVelocity(FVector::Zero());
 	fighter.GetCharacterMovement()->Velocity = FVector::Zero();
 
-	fighter.GetMesh()->PlayAnimation(fighter.m_Laying, 1);
+	fighter.GetMesh()->SetAnimation(fighter.m_Laying);
 }
 
 UFightState* ULayingState::HandleInput(ABaseFighter& fighter)
@@ -310,7 +308,7 @@ void UStandingUpState::Enter(ABaseFighter& fighter)
 	//fighter.m_FighterMesh->SetPhysicsLinearVelocity(FVector::Zero());
 	fighter.GetCharacterMovement()->Velocity = FVector::Zero();
 
-	fighter.GetMesh()->PlayAnimation(fighter.StandingUp, 0);
+	fighter.GetMesh()->SetAnimation(fighter.StandingUp);
 }
 
 UFightState* UStandingUpState::HandleInput(ABaseFighter& fighter)
@@ -334,7 +332,7 @@ void UStandingUpState::Exit(ABaseFighter& fighter)
 void UForwardWalkState::Enter(ABaseFighter& fighter)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Entering forward walk state"));
-	fighter.GetMesh()->PlayAnimation(fighter.m_ForwardWalk, 1);
+	fighter.GetMesh()->SetAnimation(fighter.m_ForwardWalk);
 }
 
 UFightState* UForwardWalkState::HandleInput(ABaseFighter& fighter)
@@ -382,7 +380,7 @@ void UForwardWalkState::Exit(ABaseFighter& fighter)
 void UBackwardWalkState::Enter(ABaseFighter& fighter)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Entering backward walk state"));
-	fighter.GetMesh()->PlayAnimation(fighter.m_BackwardWalk, 1);
+	fighter.GetMesh()->SetAnimation(fighter.m_BackwardWalk);
 }
 
 UFightState* UBackwardWalkState::HandleInput(ABaseFighter& fighter)
@@ -432,9 +430,9 @@ void UForwardDash::Enter(ABaseFighter& fighter)
 
 	if (!fighter.IsFacingRight())
 		m_DashImpulse = m_DashImpulse * -1;
-
+	fighter.GetMesh()->SetPlayRate(1.f);
 	fighter.GetMesh()->PlayAnimation(fighter.m_ForwardDash, 0);
-	fighter.GetCharacterMovement()->Velocity = (FVector(m_DashImpulse));
+	//fighter.GetCharacterMovement()->Velocity = (FVector(m_DashImpulse));
 
 	m_CurrentFrame = 0;
 }
@@ -485,7 +483,7 @@ void UAirborneState::Enter(ABaseFighter& fighter)
 	//fighter.m_FighterMesh->SetPhysicsLinearVelocity(FVector(0, 0, m_CurrentFallVelocity));
 
 	fighter.GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
-	fighter.GetCharacterMovement()->Velocity = FVector(0, 0, m_CurrentFallVelocity);
+	fighter.GetCapsuleComponent()->SetPhysicsLinearVelocity (FVector(0, 0, m_CurrentFallVelocity));
 }
 
 UFightState* UAirborneState::HandleInput(ABaseFighter& fighter)
@@ -506,13 +504,13 @@ void UAirborneState::Update(ABaseFighter& fighter)
 		m_CurrentFallVelocity = -m_MaxFallVelocity;
 
 	//fighter.m_FighterMesh->SetPhysicsLinearVelocity(FVector(0, 0, m_CurrentFallVelocity));
-	fighter.GetCharacterMovement()->Velocity = FVector(0, 0, m_CurrentFallVelocity);
+	fighter.GetCapsuleComponent()->SetPhysicsLinearVelocity(FVector(0, 0, m_CurrentFallVelocity));
 	fighter.AirCollisionCheck();
 }
 
 void UAirborneState::Exit(ABaseFighter& fighter)
 {
-	fighter.GetCharacterMovement()->Velocity = FVector::Zero();
+	fighter.GetCapsuleComponent()->SetPhysicsLinearVelocity(FVector::Zero());
 
 	fighter.GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 
@@ -529,6 +527,7 @@ void UNeutralJumpState::Enter(ABaseFighter& fighter)
 
 	//m_CurrentFallVelocity = 850.f;
 
+	fighter.GetMesh()->SetAnimation(fighter.NeutralJump);
 	m_CurrentFallVelocity = fighter.GetJumpForce();
 	//fighter.m_FighterMesh->SetEnableGravity(1);
 	UAirborneState::Enter(fighter);
@@ -551,14 +550,19 @@ void UNeutralJumpState::Update(ABaseFighter& fighter)
 	if (m_CurrentFallVelocity < -m_MaxFallVelocity)
 		m_CurrentFallVelocity = -m_MaxFallVelocity;
 
+	if(m_CurrentFallVelocity == 0)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, TEXT("Fall force is exactly zero!!!"));
+	}
+
 	//fighter.m_FighterMesh->SetPhysicsLinearVelocity(FVector(0, 0, m_CurrentFallVelocity));
-	fighter.GetCharacterMovement()->Velocity = FVector(0, 0, m_CurrentFallVelocity);
+	fighter.GetCapsuleComponent()->SetPhysicsLinearVelocity(FVector(0, 0, m_CurrentFallVelocity));
 	fighter.AirCollisionCheck();
 }
 
 void UNeutralJumpState::Exit(ABaseFighter& fighter)
 {
-	fighter.GetCharacterMovement()->Velocity = FVector::Zero();
+	fighter.GetCapsuleComponent()->SetPhysicsLinearVelocity(FVector::Zero());
 
 	fighter.GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 	auto loc = fighter.GetActorLocation();
@@ -730,7 +734,7 @@ void UBlockStunState::Enter(ABaseFighter& fighter)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Entering Block state"));
 
-	fighter.GetMesh()->PlayAnimation(fighter.Block, 0);
+	fighter.GetMesh()->SetAnimation(fighter.Block);
 
 	//m_Pushback = 400.f;
 
@@ -830,7 +834,7 @@ void UKnockbackStunState::Enter(ABaseFighter& fighter)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Entering stun state"));
 
-	fighter.GetMesh()->PlayAnimation(fighter.m_Stunned, 0);
+	fighter.GetMesh()->SetAnimation(fighter.m_Stunned);
 
 	//m_Pushback = 400.f;
 
@@ -892,7 +896,7 @@ void UAirStunState::Enter(ABaseFighter& fighter)
 		m_HorizontalKnockback *= -1;
 
 	fighter.GetCharacterMovement()->Velocity = FVector(0, m_HorizontalKnockback, m_CurrentFallVelocity);
-	fighter.GetMesh()->PlayAnimation(fighter.m_FallBlend, 1);
+	fighter.GetMesh()->SetAnimation(fighter.m_FallBlend);
 	FVector BlendParams(0, m_CurrentFallVelocity, 0);
 	fighter.GetMesh()->GetSingleNodeInstance()->SetBlendSpacePosition(BlendParams);
 	fighter.GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
@@ -940,7 +944,7 @@ UGrabStartupState::UGrabStartupState()
 
 void UGrabStartupState::Enter(ABaseFighter& fighter)
 {
-	fighter.GetMesh()->PlayAnimation(fighter.m_GrabStartUp, 0);
+	fighter.GetMesh()->SetAnimation(fighter.m_GrabStartUp);
 
 	fighter.m_Grabbox->SetResponder(fighter.m_GrabResponder);
 
@@ -991,7 +995,7 @@ void UGrabStartupState::Exit(ABaseFighter& fighter)
 
 void UGrabState::Enter(ABaseFighter& fighter)
 {
-	fighter.GetMesh()->PlayAnimation(fighter.m_GrabAttack, 0);
+	fighter.GetMesh()->SetAnimation(fighter.m_GrabAttack);
 }
 
 UFightState* UGrabState::HandleInput(ABaseFighter& fighter)
@@ -1032,7 +1036,7 @@ void UGroundedAttackState::Enter(ABaseFighter& fighter)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Entering attack state"));
 
-	fighter.GetMesh()->PlayAnimation(m_AnimationSequence, 0);
+	fighter.GetMesh()->SetAnimation(m_AnimationSequence);
 
 	fighter.m_Hitbox->SetResponder(m_Responder);
 
@@ -1103,11 +1107,20 @@ void UGroundedAttackState::Update(ABaseFighter& fighter)
 {
 	//fighter.m_FighterMesh->ComponentVelocity = FVector(0, 0, 0);
 
+	//int frame = (int)(fighter.GetMesh()->GetPosition() * 60);
+
+	//m_CurrentFrame += 1;
+
+	//float p = float((float(m_CurrentFrame) / 60.f));
+
+	//fighter.GetMesh()->SetPosition(p);
+
 	m_CurrentFrame = (int)(fighter.GetMesh()->GetPosition() * 60);
 
 	FString frameText = FString::FromInt(m_CurrentFrame);
+	//FString TimeText = FString::SanitizeFloat (p);
 
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Frame: ") + frameText);
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Time: ") + TimeText);
 
 	if (m_CurrentFrame == m_MinFrame)
 	{
@@ -1133,6 +1146,8 @@ void UGroundedAttackState::Exit(ABaseFighter& fighter)
 	fighter.ReturnHitboxHandler()->ClearCollidedObjects();
 
 	fighter.GetCharacterMovement()->Velocity = FVector::Zero();
+
+	//fighter.GetMesh()->SetPlayRate(1);
 
 	AttackStateExit(&fighter);
 }

@@ -181,7 +181,7 @@ void AFightingGameMode::Tick(float DeltaTime)
 
 		FVector TweenPos = FMath::VInterpTo(m_Camera->GetActorLocation(), cameraPos, DeltaTime, 2.f);
 
-		m_Camera->SetActorLocation(TweenPos);
+		//m_Camera->SetActorLocation(TweenPos);
 	}
 	else
 	{
@@ -197,7 +197,7 @@ void AFightingGameMode::Tick(float DeltaTime)
 
 			FVector TweenPos = FMath::VInterpTo(m_Camera->GetActorLocation(), cameraPos, DeltaTime, 2.f);
 
-			m_Camera->SetActorLocation(TweenPos);
+			//m_Camera->SetActorLocation(TweenPos);
 		}
 		else if (totalLocY > MaxLevelSize)
 		{
@@ -211,7 +211,7 @@ void AFightingGameMode::Tick(float DeltaTime)
 
 			FVector TweenPos = FMath::VInterpTo(m_Camera->GetActorLocation(), cameraPos, DeltaTime, 2.f);
 
-			m_Camera->SetActorLocation(TweenPos);
+			//m_Camera->SetActorLocation(TweenPos);
 		}
 	}
 

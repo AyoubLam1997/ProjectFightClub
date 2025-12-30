@@ -2,6 +2,7 @@
 
 
 #include "Characters/BaseFighter.h"
+#include "Animation/FixedFrameRateAnimationComponent.h"
 #include "Engine/GameEngine.h"
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/PlayerController.h"
@@ -38,6 +39,9 @@ ABaseFighter::ABaseFighter()
 
 	Pushbox = CreateDefaultSubobject<UBoxComponent>(TEXT("Pushbox"));
 	Pushbox->SetupAttachment(GetCapsuleComponent());
+
+	FixedFrameRateComponent = CreateDefaultSubobject<UFixedFrameRateAnimationComponent>(TEXT("Fixed FPS Component"));
+	Pushbox->SetupAttachment(RootComponent);
 
 	//NiagaraComponentEffectToPlay = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Hit VFX"));
 
@@ -145,7 +149,7 @@ void ABaseFighter::Tick(float DeltaTime)
 	//	}
 	//}
 
-	if(m_FreezeTime > 0)
+	/*if(m_FreezeTime > 0)
 	{
 		m_FreezeTime -= 1;
 
@@ -153,10 +157,10 @@ void ABaseFighter::Tick(float DeltaTime)
 		GetCharacterMovement()->Velocity = FVector::Zero();
 
 		return;
-	}
+	}*/
 
-	if(GetMesh()->GlobalAnimRateScale == 0.f)
-		GetMesh()->GlobalAnimRateScale = 1.f;
+	/*if(GetMesh()->GlobalAnimRateScale == 0.f)
+		GetMesh()->GlobalAnimRateScale = 1.f;*/
 
 	/*for (int i = 0; i < m_BufferHandler->m_InputBufferItems.Num(); i++)
 	{
@@ -490,7 +494,6 @@ bool ABaseFighter::InputCheck(EInputType input)
 
 						// For debugging purposes
 						int value = m_BufferHandler->InputBufferItems[i]->Buffer[j].HoldTime;
-						GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Entering attack state in buffer ") + InputToString(input) + ": Index " + FString::FromInt(j));
 
 						return 1;
 					}

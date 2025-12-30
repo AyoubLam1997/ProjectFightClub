@@ -22,6 +22,8 @@
 #include "Collision/UHitbox.h"
 #include "Collision/HitboxHandler.h"
 
+#include "Animation/FixedFrameRateAnimationComponent.h"
+
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 
@@ -198,7 +200,12 @@ public:
 	USkeletalMeshComponent* m_SkeletalMesh;*/
 
 	UPROPERTY(EditAnywhere, Category = "Default animations")
+	UAnimSequence* TPose;
+
+	UPROPERTY(EditAnywhere, Category = "Default animations")
 	UBlendSpace* m_FallBlend;
+	UPROPERTY(EditAnywhere, Category = "Default animations")
+	UBlendSpace* NeutralJump;
 	UPROPERTY(EditAnywhere, Category = "Default animations")
 	UAnimSequence* m_Idle;
 	UPROPERTY(EditAnywhere, Category = "Default animations")
@@ -276,6 +283,9 @@ public:
 	UInputAction* LightKick;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enhanced Input")
 	UInputAction* Up;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UFixedFrameRateAnimationComponent* FixedFrameRateComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hit VFX")
 	UNiagaraSystem* NiagaraComponentEffectToPlay;
