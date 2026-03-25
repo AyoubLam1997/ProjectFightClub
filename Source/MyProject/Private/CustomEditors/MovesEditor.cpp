@@ -50,8 +50,8 @@ void UMovesEditor::GetStateData(TSubclassOf<UFightState> state)
 {
 	StateToEdit = state;
 
-	SetMesh(StateToEdit.GetDefaultObject()->m_AnimationSequence->GetPreviewMesh());
-	SetAnimationData(StateToEdit.GetDefaultObject()->m_AnimationSequence);
+	SetMesh(StateToEdit.GetDefaultObject()->AnimationSequenceToPlay->GetPreviewMesh());
+	SetAnimationData(StateToEdit.GetDefaultObject()->AnimationSequenceToPlay);
 }
 
 void UMovesEditor::SetAnimationData(UAnimSequence* newAnimation)

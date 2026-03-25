@@ -22,21 +22,21 @@ void AFightingGameMode::BeginPlay()
 	SpawnInfo.bNoFail = true;
 	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	m_P1Fighter = GetWorld()->SpawnActor<ABaseFighter>(m_FighterToSpawn, pos1, rot1, SpawnInfo);
+	P1Fighter = GetWorld()->SpawnActor<ABaseFighter>(FighterToSpawn, pos1, rot1, SpawnInfo);
 	// DEV NOTE: This isn't the way to set the camera to the player. Update in the future
-	GetWorld()->GetPlayerControllerIterator()->Get(0)->Possess(m_P1Fighter);
-	m_P1Fighter->InitializeController();
-	m_P1Fighter->StopInput();
+	GetWorld()->GetPlayerControllerIterator()->Get(0)->Possess(P1Fighter);
+	P1Fighter->InitializeController();
+	P1Fighter->StopInput();
 
 	//UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerController, &cons);
 
-	m_P2Fighter = GetWorld()->SpawnActor<ABaseFighter>(m_FighterToSpawn, pos2, rot1, SpawnInfo);
-	//GetWorld()->GetPlayerControllerIterator()->Get(1)->Possess(m_P2Fighter);
+	P2Fighter = GetWorld()->SpawnActor<ABaseFighter>(FighterToSpawn, pos2, rot1, SpawnInfo);
+	//GetWorld()->GetPlayerControllerIterator()->Get(1)->Possess(P2Fighter);
 	APlayerController* controller = UGameplayStatics::CreatePlayer(GetWorld(), 1, true);
 	GetWorld()->AddController(controller);
-	controller->Possess(m_P2Fighter);
-	m_P2Fighter->InitializeController();
-	m_P2Fighter->StopInput();
+	controller->Possess(P2Fighter);
+	P2Fighter->InitializeController();
+	P2Fighter->StopInput();
 
 	AAIFighterControllerPawn* aiPawn = GetWorld()->SpawnActor<AAIFighterControllerPawn>(AIToSpawn, pos2, rot1, SpawnInfo);
 
@@ -46,33 +46,33 @@ void AFightingGameMode::BeginPlay()
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Controller is AI"));
 
-		aiCont->InitializeController(m_P2Fighter);
+		aiCont->InitializeController(P2Fighter);
 	}
 	else
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Controller is not AI"));
 
-	float y = (m_P1Fighter->GetActorLocation().Y + m_P2Fighter->GetActorLocation().Y) / 2.f;
+	float y = (P1Fighter->GetActorLocation().Y + P2Fighter->GetActorLocation().Y) / 2.f;
 
 	FVector cameraPos = FVector(-500, y, 90);
 
 	FTransform transform(FRotator{ 0.f, 0.f, 0.f }, cameraPos, FVector{ 1.f, 1.f, 1.f });
 	UWorld* poWorld = GetWorld();
-	m_Camera = poWorld->SpawnActor<ACameraActor>();
-	m_Camera->SetActorTransform(transform);
+	Camera = poWorld->SpawnActor<ACameraActor>();
+	Camera->SetActorTransform(transform);
 
-	UCameraComponent* cam = m_Camera->FindComponentByClass<UCameraComponent>();
+	UCameraComponent* cam = Camera->FindComponentByClass<UCameraComponent>();
 
 	/*cam->ProjectionMode = ECameraProjectionMode::Orthographic;
 	cam->OrthoWidth = 2000.f;*/
 
 	// PERSONAL NOTE: I HATE HOW UNREAL HANDLES CAMERAS. THIS DUMB & STUPID & DUMB
-	APlayerController* playerController = Cast<APlayerController>(m_P1Fighter->Controller);
+	APlayerController* playerController = Cast<APlayerController>(P1Fighter->Controller);
 
-	playerController->SetViewTarget(m_Camera);
+	playerController->SetViewTarget(Camera);
 
-	m_CurrentTimer = 1.5f;
+	CurrentTimer = 1.5f;
 
-	m_GameState = EFighGameState::Countdown;
+	GameState = EFighGameState::Countdown;
 
 	PrimaryActorTick.bStartWithTickEnabled = true;
 	PrimaryActorTick.bCanEverTick = true;
@@ -84,21 +84,21 @@ void AFightingGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	switch(m_GameState)
+	switch(GameState)
 	{
 	case EFighGameState::Countdown:
 	{
-		m_CurrentTimer -= DeltaTime;
+		CurrentTimer -= DeltaTime;
 
-		if (m_CurrentTimer <= 0)
+		if (CurrentTimer <= 0)
 			SwitchGameState(EFighGameState::Fighting);
 	}
 		break;
 	case EFighGameState::Fighting:
 
-		if (!m_P1Fighter->IsAlive() || !m_P2Fighter->IsAlive())
+		if (!P1Fighter->IsAlive() || !P2Fighter->IsAlive())
 		{
-			m_CurrentTimer = 1.5f;
+			CurrentTimer = 1.5f;
 
 			SwitchGameState(EFighGameState::RoundWin);
 		}
@@ -106,14 +106,14 @@ void AFightingGameMode::Tick(float DeltaTime)
 		break;
 	case EFighGameState::RoundWin:
 
-		m_CurrentTimer -= DeltaTime;
+		CurrentTimer -= DeltaTime;
 
-		if (m_CurrentTimer <= 0)
+		if (CurrentTimer <= 0)
 		{
-			m_CurrentTimer = 1.5f;
+			CurrentTimer = 1.5f;
 
-			m_P1Fighter->ResetPlayer();
-			m_P2Fighter->ResetPlayer();
+			P1Fighter->ResetPlayer();
+			P2Fighter->ResetPlayer();
 
 			SetPlayerRoundStart();
 
@@ -123,19 +123,19 @@ void AFightingGameMode::Tick(float DeltaTime)
 		break;
 	}
 
-	if(m_P1Fighter->GetActorLocation().Y < m_P2Fighter->GetActorLocation().Y && !m_P1Fighter->IsFacingRight())
+	if(P1Fighter->GetActorLocation().Y < P2Fighter->GetActorLocation().Y && !P1Fighter->IsFacingRight())
 	{
-		m_P1Fighter->SetFacingRight(1);
-		m_P2Fighter->SetFacingRight(0);
+		P1Fighter->SetFacingRight(1);
+		P2Fighter->SetFacingRight(0);
 	}
-	else if (m_P1Fighter->GetActorLocation().Y > m_P2Fighter->GetActorLocation().Y && m_P1Fighter->IsFacingRight())
+	else if (P1Fighter->GetActorLocation().Y > P2Fighter->GetActorLocation().Y && P1Fighter->IsFacingRight())
 	{
-		m_P1Fighter->SetFacingRight(0);
-		m_P2Fighter->SetFacingRight(1);
+		P1Fighter->SetFacingRight(0);
+		P2Fighter->SetFacingRight(1);
 	}
 
-	FVector loc1 = m_P1Fighter->GetActorLocation();
-	FVector loc2 = m_P2Fighter->GetActorLocation();
+	FVector loc1 = P1Fighter->GetActorLocation();
+	FVector loc2 = P2Fighter->GetActorLocation();
 
 	Distance = fabsf(loc1.Y - loc2.Y);
 
@@ -143,13 +143,13 @@ void AFightingGameMode::Tick(float DeltaTime)
 	{
 		if (loc1.Y >= loc2.Y)
 		{
-			loc1.Y = m_Camera->GetActorLocation().Y + 1200.f;
-			loc2.Y = m_Camera->GetActorLocation().Y - 1200.f;
+			loc1.Y = Camera->GetActorLocation().Y + 1200.f;
+			loc2.Y = Camera->GetActorLocation().Y - 1200.f;
 		}
 		else if (loc1.Y <= loc2.Y)
 		{
-			loc1.Y = m_Camera->GetActorLocation().Y - 1200.f;
-			loc2.Y = m_Camera->GetActorLocation().Y + 1200.f;
+			loc1.Y = Camera->GetActorLocation().Y - 1200.f;
+			loc2.Y = Camera->GetActorLocation().Y + 1200.f;
 		}
 	}
 
@@ -162,26 +162,26 @@ void AFightingGameMode::Tick(float DeltaTime)
 	if (loc2.Y < -1000.f)
 		loc2.Y = -1000.f;
 
-	m_P1Fighter->SetActorLocation(loc1);
-	m_P2Fighter->SetActorLocation(loc2);
+	P1Fighter->SetActorLocation(loc1);
+	P2Fighter->SetActorLocation(loc2);
 
 	float totalLocY = (loc1.Y + loc2.Y) / 2.f;
 
 	if (totalLocY > -MaxLevelSize && totalLocY < MaxLevelSize)
 	{
-		float y = (m_P1Fighter->GetActorLocation().Y + m_P2Fighter->GetActorLocation().Y) / 2.f;
+		float y = (P1Fighter->GetActorLocation().Y + P2Fighter->GetActorLocation().Y) / 2.f;
 
 		FVector cameraPos = FVector(-400, y, 90);
 
-		if(m_P1Fighter->GetActorLocation().Z > 90.f || m_P2Fighter->GetActorLocation().Z > 90.f)
+		if(P1Fighter->GetActorLocation().Z > 90.f || P2Fighter->GetActorLocation().Z > 90.f)
 		{
-			float z = (m_P1Fighter->GetActorLocation().Z + m_P2Fighter->GetActorLocation().Z) / 2.f;
+			float z = (P1Fighter->GetActorLocation().Z + P2Fighter->GetActorLocation().Z) / 2.f;
 			cameraPos.Z = z;
 		}
 
-		FVector TweenPos = FMath::VInterpTo(m_Camera->GetActorLocation(), cameraPos, DeltaTime, 2.f);
+		FVector TweenPos = FMath::VInterpTo(Camera->GetActorLocation(), cameraPos, DeltaTime, 2.f);
 
-		//m_Camera->SetActorLocation(TweenPos);
+		//Camera->SetActorLocation(TweenPos);
 	}
 	else
 	{
@@ -189,37 +189,37 @@ void AFightingGameMode::Tick(float DeltaTime)
 		{
 			FVector cameraPos = FVector(-400, -MaxLevelSize, 90);
 
-			if (m_P1Fighter->GetActorLocation().Z > 90.f || m_P2Fighter->GetActorLocation().Z > 90.f)
+			if (P1Fighter->GetActorLocation().Z > 90.f || P2Fighter->GetActorLocation().Z > 90.f)
 			{
-				float z = (m_P1Fighter->GetActorLocation().Z + m_P2Fighter->GetActorLocation().Z) / 2.f;
+				float z = (P1Fighter->GetActorLocation().Z + P2Fighter->GetActorLocation().Z) / 2.f;
 				cameraPos.Z = z;
 			}
 
-			FVector TweenPos = FMath::VInterpTo(m_Camera->GetActorLocation(), cameraPos, DeltaTime, 2.f);
+			FVector TweenPos = FMath::VInterpTo(Camera->GetActorLocation(), cameraPos, DeltaTime, 2.f);
 
-			//m_Camera->SetActorLocation(TweenPos);
+			//Camera->SetActorLocation(TweenPos);
 		}
 		else if (totalLocY > MaxLevelSize)
 		{
 			FVector cameraPos = FVector(-400, MaxLevelSize, 90);
 
-			if (m_P1Fighter->GetActorLocation().Z > 90.f || m_P2Fighter->GetActorLocation().Z > 90.f)
+			if (P1Fighter->GetActorLocation().Z > 90.f || P2Fighter->GetActorLocation().Z > 90.f)
 			{
-				float z = (m_P1Fighter->GetActorLocation().Z + m_P2Fighter->GetActorLocation().Z) / 2.f;
+				float z = (P1Fighter->GetActorLocation().Z + P2Fighter->GetActorLocation().Z) / 2.f;
 				cameraPos.Z = z;
 			}
 
-			FVector TweenPos = FMath::VInterpTo(m_Camera->GetActorLocation(), cameraPos, DeltaTime, 2.f);
+			FVector TweenPos = FMath::VInterpTo(Camera->GetActorLocation(), cameraPos, DeltaTime, 2.f);
 
-			//m_Camera->SetActorLocation(TweenPos);
+			//Camera->SetActorLocation(TweenPos);
 		}
 	}
 
-	/*FRotator p1Rot = UKismetMathLibrary::FindLookAtRotation(m_P1Fighter->GetMesh()->GetComponentLocation(), m_Camera->GetActorLocation());
-	FRotator p2Rot = UKismetMathLibrary::FindLookAtRotation(m_P2Fighter->GetMesh()->GetComponentLocation(), m_Camera->GetActorLocation());
+	/*FRotator p1Rot = UKismetMathLibrary::FindLookAtRotation(P1Fighter->GetMesh()->GetComponentLocation(), Camera->GetActorLocation());
+	FRotator p2Rot = UKismetMathLibrary::FindLookAtRotation(P2Fighter->GetMesh()->GetComponentLocation(), Camera->GetActorLocation());
 
-	m_P1Fighter->GetMesh()->SetWorldRotation(FRotator(0, p1Rot.Pitch, 0));
-	m_P2Fighter->GetMesh()->SetWorldRotation(p2Rot);*/
+	P1Fighter->GetMesh()->SetWorldRotation(FRotator(0, p1Rot.Pitch, 0));
+	P2Fighter->GetMesh()->SetWorldRotation(p2Rot);*/
 	
 	//AirToGroundCollisionCheck();
 }
@@ -229,8 +229,8 @@ void AFightingGameMode::SetPlayerRoundStart()
 	FVector pos1 = FVector(0, -200, 0);
 	FVector pos2 = FVector(0, 200, 0);
 
-	m_P1Fighter->SetActorLocation(pos1);
-	m_P2Fighter->SetActorLocation(pos2);
+	P1Fighter->SetActorLocation(pos1);
+	P2Fighter->SetActorLocation(pos2);
 }
 
 void AFightingGameMode::AirToGroundCollisionCheck()
@@ -238,15 +238,15 @@ void AFightingGameMode::AirToGroundCollisionCheck()
 	ABaseFighter* top = nullptr;
 	ABaseFighter* bottom = nullptr;
 
-	if ((m_P1Fighter->GetActorLocation().Z + m_P1Fighter->m_FighterMesh->GetUnscaledBoxExtent().Z) > (m_P2Fighter->GetActorLocation().Z + m_P2Fighter->m_FighterMesh->GetUnscaledBoxExtent().Z))
+	if ((P1Fighter->GetActorLocation().Z + P1Fighter->FighterMesh->GetUnscaledBoxExtent().Z) > (P2Fighter->GetActorLocation().Z + P2Fighter->FighterMesh->GetUnscaledBoxExtent().Z))
 	{
-		top = m_P1Fighter;
-		bottom = m_P2Fighter;
+		top = P1Fighter;
+		bottom = P2Fighter;
 	}
-	else if ((m_P2Fighter->GetActorLocation().Z + m_P2Fighter->m_FighterMesh->GetUnscaledBoxExtent().Z) > (m_P1Fighter->GetActorLocation().Z + m_P1Fighter->m_FighterMesh->GetUnscaledBoxExtent().Z))
+	else if ((P2Fighter->GetActorLocation().Z + P2Fighter->FighterMesh->GetUnscaledBoxExtent().Z) > (P1Fighter->GetActorLocation().Z + P1Fighter->FighterMesh->GetUnscaledBoxExtent().Z))
 	{
-		top = m_P2Fighter;
-		bottom = m_P1Fighter;
+		top = P2Fighter;
+		bottom = P1Fighter;
 	}
 
 	if (top == nullptr)
@@ -254,7 +254,7 @@ void AFightingGameMode::AirToGroundCollisionCheck()
 
 	TArray<AActor*> actors;
 
-	top->m_FighterMesh->GetOverlappingActors(actors);
+	top->FighterMesh->GetOverlappingActors(actors);
 
 	if(actors.Num() > 0)
 	{
@@ -262,8 +262,8 @@ void AFightingGameMode::AirToGroundCollisionCheck()
 
 		if(actors.Contains(bottom))
 		{
-			/*FString s = FString::SanitizeFloat(top->GetActorLocation().Z + top->m_FighterMesh->GetUnscaledBoxExtent().Z);
-			FString s2 = FString::SanitizeFloat(bottom->GetActorLocation().Z + bottom->m_FighterMesh->GetUnscaledBoxExtent().Z);
+			/*FString s = FString::SanitizeFloat(top->GetActorLocation().Z + top->FighterMesh->GetUnscaledBoxExtent().Z);
+			FString s2 = FString::SanitizeFloat(bottom->GetActorLocation().Z + bottom->FighterMesh->GetUnscaledBoxExtent().Z);
 
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, *s);
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, *s2);*/
@@ -278,10 +278,10 @@ void AFightingGameMode::AirToGroundCollisionCheck()
 				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Higher"));
 
 				auto leftLoc = top->GetActorLocation();
-				float leftY = leftLoc.Y - top->m_FighterMesh->GetUnscaledBoxExtent().Y;
+				float leftY = leftLoc.Y - top->FighterMesh->GetUnscaledBoxExtent().Y;
 
 				auto rightLox = bottom->GetActorLocation();
-				float rightY = rightLox.Y + bottom->m_FighterMesh->GetUnscaledBoxExtent().Y;
+				float rightY = rightLox.Y + bottom->FighterMesh->GetUnscaledBoxExtent().Y;
 
 				leftLoc.Y = leftY;
 				rightLox.Y = rightY;
@@ -294,10 +294,10 @@ void AFightingGameMode::AirToGroundCollisionCheck()
 				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Lower"));
 
 				auto leftLoc = top->GetActorLocation();
-				float leftY = leftLoc.Y + top->m_FighterMesh->GetUnscaledBoxExtent().Y;
+				float leftY = leftLoc.Y + top->FighterMesh->GetUnscaledBoxExtent().Y;
 
 				auto rightLox = bottom->GetActorLocation();
-				float rightY = rightLox.Y - bottom->m_FighterMesh->GetUnscaledBoxExtent().Y;
+				float rightY = rightLox.Y - bottom->FighterMesh->GetUnscaledBoxExtent().Y;
 
 				leftLoc.Y = leftY;
 				rightLox.Y = rightY;
@@ -315,16 +315,16 @@ void AFightingGameMode::SwitchGameState(EFighGameState state)
 {
 	if(state == EFighGameState::Fighting)
 	{
-		m_P1Fighter->StartInput();
-		m_P2Fighter->StartInput();
+		P1Fighter->StartInput();
+		P2Fighter->StartInput();
 	}
 	else
 	{
-		m_P1Fighter->StopInput();
-		m_P2Fighter->StopInput();
+		P1Fighter->StopInput();
+		P2Fighter->StopInput();
 	}
 
-	m_GameState = state;
+	GameState = state;
 }
 
 
@@ -335,12 +335,12 @@ void APlayArea::BeginPlay()
 	FRotator rot1 = FRotator(0, 0, 0);
 	FActorSpawnParameters SpawnInfo = FActorSpawnParameters();
 
-	m_P1Fighter = GetWorld()->SpawnActor<ABaseFighter>(m_FighterToSpawn, pos1, rot1, SpawnInfo);
+	P1Fighter = GetWorld()->SpawnActor<ABaseFighter>(FighterToSpawn, pos1, rot1, SpawnInfo);
 	// DEV NOTE: This isn't the way to set the camera to the player. Update in the future
-	GetWorld()->GetPlayerControllerIterator()->Get(0)->Possess(m_P1Fighter);
-	m_P1Fighter->InitializeController();
+	GetWorld()->GetPlayerControllerIterator()->Get(0)->Possess(P1Fighter);
+	P1Fighter->InitializeController();
 
-	m_P1Fighter->StartInput();
+	P1Fighter->StartInput();
 }
 
 void APlayArea::Tick(float DeltaTime)

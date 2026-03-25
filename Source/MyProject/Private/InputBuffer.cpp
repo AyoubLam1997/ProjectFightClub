@@ -154,7 +154,6 @@ void UInputBuffer::Initialize()
 
 void UInputBuffer::BufferUpdate()
 {
-    GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Blue, FString::FromInt(InputBufferItems.Num()));
     if (InputBufferItems.Num() > 0) 
     {
        /* for(int i = 0; i < m_InputBufferItems.Num(); i++)
@@ -164,9 +163,6 @@ void UInputBuffer::BufferUpdate()
 
         for (auto bufferItem : InputBufferItems)
         {
-            // Checks if one of the buttons is pressed
-            bufferItem->InputCheck();
-
             // This reads the buffer in reverse
             //for(int i = 0; i < bufferItem.Buffer.Count - 1; i++)
             //{
@@ -183,6 +179,10 @@ void UInputBuffer::BufferUpdate()
             {
                 //GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Blue, FString::FromInt(bufferItem->m_Buffer[0].m_HoldTime));
             }
+
+            // Checks if one of the buttons is pressed
+            bufferItem->InputCheck();
+
         }
     }
 }
@@ -192,8 +192,6 @@ void UInputBuffer::UpdateMotion(bool right)
     for (int i = 0; i < MotionInputs.Num(); i++)
     {
         MotionInputs[i]->BufferCheck();
-
-        //GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::FromInt(i));
 
         for (int j = 0; j < InputBufferItems.Num(); j++)
         {
@@ -356,22 +354,9 @@ void UInputBufferItem::InputCheck()
     }
 }
 
-void UInputBufferItem::SetUsedTrue()
-{
-    IsUsed = true;
-}
-
-void UInputBufferItem::SetUsedFalse()
-{
-    IsUsed = false;
-}
-
 void UInputBufferItem::SetInputActionPressed(bool pressed)
 {
     InputActionPressed = pressed;
-
-    if (pressed == 0)
-        SetUsedFalse();
 }
 
 void UInputBufferItem::SetHoldUsed(int index, int time, bool used, bool motion)

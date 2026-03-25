@@ -42,12 +42,12 @@ public:
 	void Init();
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UFightState> m_State;
+	TSubclassOf<UFightState> State;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<EInputType> m_RequiredInput;
+	TArray<EInputType> RequiredInput;
 
-	UMotionInput m_MotionInput;
+	UMotionInput MotionInput;
 };
 
 UCLASS(Blueprintable, BlueprintType)
@@ -58,11 +58,11 @@ class MYPROJECT_API ABaseFighter : public ACharacter
 protected:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float m_MaxHealth;
+	float MaxHealth;
 	UPROPERTY(EditAnywhere)
-	float m_ForwardWalkSpeed;
+	float ForwardWalkSpeed;
 	UPROPERTY(EditAnywhere)
-	float m_BackwardWalkSpeed;
+	float BackwardWalkSpeed;
 
 	UPROPERTY(EditAnywhere)
 	float JumpForce;
@@ -70,20 +70,20 @@ protected:
 	float JumpMoveForce;
 
 	UPROPERTY(BlueprintReadOnly)
-	float m_CurrentHealth;
+	float CurrentHealth;
 
-	EInputType m_ForwardInput;
-	EInputType m_BackwardInput;
+	EInputType ForwardInput;
+	EInputType BackwardInput;
 
-	UInputBuffer* m_BufferHandler;
+	UInputBuffer* BufferHandler;
 
-	UFightState* m_State;
+	UFightState* State;
 
-	HitboxHandler* m_HitboxHandler;
+	HitboxHandler* HitboxesHandler;
 
-	bool m_FacingRight = 0;
+	bool FacingRight = 0;
 
-	int m_FreezeTime = 0;
+	int FreezeTime = 0;
 
 public:
 	// Sets default values for this pawn's properties
@@ -174,78 +174,87 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsInBlockState() const;
 
+	UFUNCTION(BlueprintCallable)
+	FString GetInputBufferData();
+
+	UFUNCTION(BlueprintCallable)
+	FString GetInputBufferName();
+
+	UFUNCTION(BlueprintCallable)
+	FString GetInputBufferDataByIndex(int index);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:
 
-	float m_MaxSuperBar = 100.f;
-	float m_CurrentSuperBar;
+	float MaxSuperBar = 100.f;
+	float CurrentSuperBar;
 
 	//UCharacterMovementComponent* Movement;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UHitbox* m_Hitbox;
+	UHitbox* Hitbox;
 	UPROPERTY(EditAnywhere)
-	UHitbox* m_Grabbox;
+	UHitbox* Grabbox;
 
 	UPROPERTY(EditAnywhere)
-	UBoxComponent* m_FighterMesh;
+	UBoxComponent* FighterMesh;
 
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* Pushbox;
 
 	/*UPROPERTY(EditAnywhere)
-	USkeletalMeshComponent* m_SkeletalMesh;*/
+	USkeletalMeshComponent* SkeletalMesh;*/
 
 	UPROPERTY(EditAnywhere, Category = "Default animations")
 	UAnimSequence* TPose;
 
 	UPROPERTY(EditAnywhere, Category = "Default animations")
-	UBlendSpace* m_FallBlend;
+	UBlendSpace* FallBlend;
 	UPROPERTY(EditAnywhere, Category = "Default animations")
 	UBlendSpace* NeutralJump;
 	UPROPERTY(EditAnywhere, Category = "Default animations")
-	UAnimSequence* m_Idle;
+	UAnimSequence* Idle;
 	UPROPERTY(EditAnywhere, Category = "Default animations")
-	UAnimSequence* m_Crouch;
+	UAnimSequence* DuckCrouch;
 	UPROPERTY(EditAnywhere, Category = "Default animations")
-	UAnimSequence* m_ForwardWalk;
+	UAnimSequence* ForwardWalk;
 	UPROPERTY(EditAnywhere, Category = "Default animations")
-	UAnimSequence* m_BackwardWalk;
+	UAnimSequence* BackwardWalk;
 	UPROPERTY(EditAnywhere, Category = "Default animations")
-	UAnimSequence* m_ForwardDash;
+	UAnimSequence* ForwardDash;
 	UPROPERTY(EditAnywhere, Category = "Default animations")
-	UAnimSequence* m_BackwardDash;
+	UAnimSequence* BackwardDash;
 	UPROPERTY(EditAnywhere, Category = "Default animations")
-	UAnimSequence* m_Laying;
+	UAnimSequence* Laying;
 	UPROPERTY(EditAnywhere, Category = "Default animations")
 	UAnimSequence* StandingUp;
 	UPROPERTY(EditAnywhere, Category = "Default animations")
-	UAnimSequence* m_Stunned;
+	UAnimSequence* Stunned;
 	UPROPERTY(EditAnywhere, Category = "Default animations")
 	UAnimSequence* Block;
 	UPROPERTY(EditAnywhere, Category = "Default animations")
-	UAnimSequence* m_GrabStartUp;
+	UAnimSequence* GrabStartUp;
 	UPROPERTY(EditAnywhere, Category = "Default animations")
-	UAnimSequence* m_GrabAttack;
+	UAnimSequence* GrabAttack;
 
 	UPROPERTY(EditAnywhere)
-	UHitboxResponder* m_GrabResponder;
+	UHitboxResponder* GrabResponder;
 
 	UPROPERTY(EditAnywhere, Category = "Normal attacks")
-	TSubclassOf<UGroundedAttackState> m_LightPunch;
+	TSubclassOf<UGroundedAttackState> LightPunch;
 	UPROPERTY(EditAnywhere, Category = "Normal attacks")
-	TSubclassOf<UGroundedAttackState> m_MediumPunch;
+	TSubclassOf<UGroundedAttackState> MediumPunch;
 	UPROPERTY(EditAnywhere, Category = "Normal attacks")
-	TSubclassOf<UGroundedAttackState> m_HeavyPunch;
+	TSubclassOf<UGroundedAttackState> HeavyPunch;
 	UPROPERTY(EditAnywhere, Category = "Normal attacks")
-	TSubclassOf<UGroundedAttackState> m_LightKick;
+	TSubclassOf<UGroundedAttackState> LightKick;
 	UPROPERTY(EditAnywhere, Category = "Normal attacks")
-	TSubclassOf<UGroundedAttackState> m_MediumKick;
+	TSubclassOf<UGroundedAttackState> MediumKick;
 	UPROPERTY(EditAnywhere, Category = "Normal attacks")
-	TSubclassOf<UGroundedAttackState> m_HeavyKick;
+	TSubclassOf<UGroundedAttackState> HeavyKick;
 
 
 	UPROPERTY(EditAnywhere, Category = "Normal attacks")
@@ -262,13 +271,13 @@ public:
 	TSubclassOf<UGroundedAttackState> CrouchHeavyKick;
 
 	UPROPERTY(EditAnywhere, Category = "Special moves")
-	TArray <FSpecialMoves> m_SpecialMoves;
+	TArray <FSpecialMoves> SpecialMoves;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UGrabState> m_GrabState;
+	TSubclassOf<UGrabState> GrabState;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UForwardDash> m_DashState;
+	TSubclassOf<UForwardDash> DashState;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enhanced Input")
 	UInputMappingContext* MappingContext;
@@ -278,14 +287,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enhanced Input")
 	UInputAction* Left;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enhanced Input")
-	UInputAction* LightPunch;
+	UInputAction* LightPunchInput;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enhanced Input")
-	UInputAction* LightKick;
+	UInputAction* LightKickInput;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enhanced Input")
 	UInputAction* Up;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UFixedFrameRateAnimationComponent* FixedFrameRateComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hit VFX")
 	UNiagaraSystem* NiagaraComponentEffectToPlay;
@@ -293,10 +299,10 @@ public:
 	USpecialMoveState* ReturnSpecialMove();
 
 	/*UPROPERTY(Instanced, EditAnywhere, BlueprintReadWrite)
-	UMotionInput* m_MotionInput;
+	UMotionInput* MotionInput;
 
 	UPROPERTY(EditAnywhere)
-	TArray<UMotionInput*> m_MotionInputs;*/
+	TArray<UMotionInput*> MotionInputs;*/
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

@@ -44,8 +44,12 @@ public:
 	UMotionInput(TArray<EInputType> motions);
 	~UMotionInput() {};
 
-	/*UPROPERTY(EditDefaultsOnly)
-	TEnumAsByte<EInputType> InputDirection;*/
+	void BufferCheck();
+	void IncreaseIndex();
+	void ResetInput();
+
+	bool MotionComplete();
+	bool InputCheck(EInputType input);
 
 	TArray<EInputType> MotionInputs;
 
@@ -53,13 +57,6 @@ public:
 	int IndexCheck = 0;
 
 	bool MotionUsed;
-
-	void BufferCheck();
-	void IncreaseIndex();
-	void ResetInput();
-
-	bool MotionComplete();
-	bool InputCheck(EInputType input);
 };
 
 class MYPROJECT_API UInputStateItem
@@ -71,9 +68,9 @@ public:
 
 	void HoldUp();
 	void ReleasedUp();
-	void SetHoldUsed(int time, bool used, bool motion);
 	void SetUsedTrue();
 	void SetMotionTrue();
+	void SetHoldUsed(int time, bool used, bool motion);
 
 	int HoldTime = 0;
 
@@ -89,21 +86,14 @@ public:
 	UInputBufferItem(EInputType direction);
 	~UInputBufferItem() {};
 
+	void InputCheck();
+	void SetInputActionPressed(bool pressed);
 	void AssignDirection(EInputType direction);
 	void SetHoldUsed(int index, int time, bool used, bool motion);
-
-	void InputCheck();
-
-	void SetUsedTrue();
-	void SetUsedFalse();
-
-	void SetInputActionPressed(bool pressed);
 
 	EInputType InputDirection;
 
 	UInputAction* Action;
-
-	bool IsUsed = 0;
 
 	bool InputActionPressed = 0;
 
@@ -123,13 +113,13 @@ public:
 	UInputBuffer(TArray<UMotionInput*>& inputs);
 	~UInputBuffer();
 
-	TArray<UInputBufferItem*> InputBufferItems;
-	TArray<UMotionInput*> MotionInputs;
-
 	void Initialize();
 	void BufferUpdate();
 
 	void add(TArray<UMotionInput*>& inputs);
 
 	void UpdateMotion(bool right);
+
+	TArray<UInputBufferItem*> InputBufferItems;
+	TArray<UMotionInput*> MotionInputs;
 };

@@ -37,8 +37,8 @@ void ABaseAIController::InitializeController(ABaseFighter* fighter)
 
 	RightInput = PossessedFighter->Right;
 	LeftInput = PossessedFighter->Left;
-	LightPunchInput = PossessedFighter->LightPunch;
-	LightKickInput = PossessedFighter->LightKick;
+	LightPunchInput = PossessedFighter->LightPunchInput;
+	LightKickInput = PossessedFighter->LightKickInput;
 	UpInput = PossessedFighter->Up;
 
 	IsFacingRight = PossessedFighter->IsFacingRight();

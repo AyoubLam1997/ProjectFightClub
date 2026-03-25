@@ -12,12 +12,12 @@
 
 FSpecialMoves::FSpecialMoves()
 {
-	//m_MotionInput->m_MotionInputs = m_RequiredInput;
+	//MotionInput->MotionInputs = RequiredInput;
 }
 
 void FSpecialMoves::Init()
 {
-	m_MotionInput.MotionInputs = m_RequiredInput;
+	MotionInput.MotionInputs = RequiredInput;
 }
 
 // Sets default values
@@ -25,7 +25,7 @@ ABaseFighter::ABaseFighter()
 {
 	//FScriptDelegate ScriptDelegate;
 	//ScriptDelegate.BindUFunction(this, FName("JumpOverlap"));
-	//m_FighterMesh->OnComponentHit.Add(ScriptDelegate);
+	//FighterMesh->OnComponentHit.Add(ScriptDelegate);
 
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bStartWithTickEnabled = true;
@@ -34,58 +34,57 @@ ABaseFighter::ABaseFighter()
 	/*comp = CreateDefaultSubobject<USceneComponent>(TEXT("Comp"));
 	RootComponent = comp;*/
 	
-	m_FighterMesh = CreateDefaultSubobject<UBoxComponent>(TEXT("FighterMesh"));
-	m_FighterMesh->SetupAttachment(GetCapsuleComponent());
+	FighterMesh = CreateDefaultSubobject<UBoxComponent>(TEXT("FighterMesh"));
+	FighterMesh->SetupAttachment(GetCapsuleComponent());
 
 	Pushbox = CreateDefaultSubobject<UBoxComponent>(TEXT("Pushbox"));
 	Pushbox->SetupAttachment(GetCapsuleComponent());
 
-	FixedFrameRateComponent = CreateDefaultSubobject<UFixedFrameRateAnimationComponent>(TEXT("Fixed FPS Component"));
 	Pushbox->SetupAttachment(RootComponent);
 
 	//NiagaraComponentEffectToPlay = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Hit VFX"));
 
 	//RootComponent = comp;
-	//m_FighterMesh->SetupAttachment(comp);
+	//FighterMesh->SetupAttachment(comp);
 
-	//SetRootComponent(m_FighterMesh);
+	//SetRootComponent(FighterMesh);
 
-	//m_SkeletalMesh = FindComponentByClass<USkeletalMeshComponent>();
-	//m_SkeletalMesh->SetupAttachment(m_FighterMesh);
-	/*m_SkeletalMesh->AddLocalOffset(FVector(0, 0, 0 - (Hurtbox->GetUnscaledBoxExtent().Z / 2.f)));*/
+	//SkeletalMesh = FindComponentByClass<USkeletalMeshComponent>();
+	//SkeletalMesh->SetupAttachment(FighterMesh);
+	/*SkeletalMesh->AddLocalOffset(FVector(0, 0, 0 - (Hurtbox->GetUnscaledBoxExtent().Z / 2.f)));*/
 
-	m_BufferHandler = new UInputBuffer();
+	BufferHandler = new UInputBuffer();
 
-	//m_BufferHandler = NewObject<UInputBuffer>();
+	//BufferHandler = NewObject<UInputBuffer>();
 
-	//m_BufferHandler->add(m_MotionInputs);
+	//BufferHandler->add(MotionInputs);
 
-	m_ForwardInput = EInputType::Right;
-	m_BackwardInput = EInputType::Left;
+	ForwardInput = EInputType::Right;
+	BackwardInput = EInputType::Left;
 }
 
 // Called when the game starts or when spawned
 void ABaseFighter::BeginPlay()
 {
-	//m_BufferHandler->Initialize();
+	//BufferHandler->Initialize();
 
 	Super::BeginPlay();
 
-	//m_Grabbox->AssignHitboxHandler(m_HitboxHandler);
+	//Grabbox->AssignHitboxHandler(HitboxHandler);
 
-	m_CurrentHealth = m_MaxHealth;
-	m_CurrentSuperBar = 0;
+	CurrentHealth = MaxHealth;
+	CurrentSuperBar = 0;
 
-	m_State = NewObject <UGroundedState>();
-	m_State->AddToRoot();
-	m_State->Enter(*this);
+	State = NewObject <UGroundedState>();
+	State->AddToRoot();
+	State->Enter(*this);
 
-	m_Hitbox = FindComponentByClass<UHitbox>();
-	//m_Grabbox = Cast<UHitbox>(GetDefaultSubobjectByName(TEXT("GrabBox")));
+	Hitbox = FindComponentByClass<UHitbox>();
+	//Grabbox = Cast<UHitbox>(GetDefaultSubobjectByName(TEXT("GrabBox")));
 
-	m_HitboxHandler = new HitboxHandler();
+	HitboxesHandler = new HitboxHandler();
 
-	m_Hitbox->AssignHitboxHandler(m_HitboxHandler);
+	Hitbox->AssignHitboxHandler(HitboxesHandler);
 
 	TArray<EInputType> input;
 
@@ -96,17 +95,17 @@ void ABaseFighter::BeginPlay()
 
 	dashInput->MotionInputs = input;
 
-	m_BufferHandler->MotionInputs.Add(dashInput);
+	BufferHandler->MotionInputs.Add(dashInput);
 
-	for (int i = 0; i < m_SpecialMoves.Num(); i++)
+	for (int i = 0; i < SpecialMoves.Num(); i++)
 	{
-		m_SpecialMoves[i].Init();
-		m_BufferHandler->MotionInputs.Add(&m_SpecialMoves[i].m_MotionInput);
+		SpecialMoves[i].Init();
+		BufferHandler->MotionInputs.Add(&SpecialMoves[i].MotionInput);
 	}
 
 	Pushbox->RegisterComponentWithWorld(GetWorld());
 
-	//m_FighterMesh->OnComponentHit.AddDynamic(this, &ABaseFighter::OnHit);
+	//FighterMesh->OnComponentHit.AddDynamic(this, &ABaseFighter::OnHit);
 	//Movement = FindComponentByClass<UCharacterMovementComponent>();
 
 	//Movement->UpdatedComponent = Hurtbox;
@@ -130,28 +129,28 @@ void ABaseFighter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	/*GroundedState* ground = Cast<GroundedState>(m_State);
+	/*GroundedState* ground = Cast<GroundedState>(State);
 
 	bool exists = (ground != nullptr);
 
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, UKismetStringLibrary::Conv_BoolToString(exists));*/
 
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::SanitizeFloat(m_CurrentHealth));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::SanitizeFloat(CurrentHealth));
 
-	m_BufferHandler->BufferUpdate();
-	m_BufferHandler->UpdateMotion(m_FacingRight);
+	BufferHandler->BufferUpdate();
+	BufferHandler->UpdateMotion(FacingRight);
 
-	//for (int i = 0; i < m_BufferHandler->m_InputBufferItems.Num(); i++)
+	//for (int i = 0; i < BufferHandler->InputBufferItems.Num(); i++)
 	//{
-	//	if (m_BufferHandler->m_InputBufferItems[i]->InputDirection == EInputType::LightPunch)
+	//	if (BufferHandler->InputBufferItems[i]->InputDirection == EInputType::LightPunch)
 	//	{
-	//		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, UKismetStringLibrary::Conv_BoolToString(m_BufferHandler->m_InputBufferItems[i]->m_Buffer[0].m_IsUsed));
+	//		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, UKismetStringLibrary::Conv_BoolToString(BufferHandler->InputBufferItems[i]->Buffer[0].IsUsed));
 	//	}
 	//}
 
-	/*if(m_FreezeTime > 0)
+	/*if(FreezeTime > 0)
 	{
-		m_FreezeTime -= 1;
+		FreezeTime -= 1;
 
 		GetMesh()->GlobalAnimRateScale = 0.f;
 		GetCharacterMovement()->Velocity = FVector::Zero();
@@ -162,34 +161,34 @@ void ABaseFighter::Tick(float DeltaTime)
 	/*if(GetMesh()->GlobalAnimRateScale == 0.f)
 		GetMesh()->GlobalAnimRateScale = 1.f;*/
 
-	/*for (int i = 0; i < m_BufferHandler->m_InputBufferItems.Num(); i++)
+	/*for (int i = 0; i < BufferHandler->InputBufferItems.Num(); i++)
 	{
-		UInputBufferItem* item = m_BufferHandler->m_InputBufferItems[i];
+		UInputBufferItem* item = BufferHandler->InputBufferItems[i];
 
-		if (item->InputDirection == EInputType::LightPunch && item->m_Buffer[0].m_HoldTime == 1)
+		if (item->InputDirection == EInputType::LightPunch && item->Buffer[0].HoldTime == 1)
 		{
 			ChangeToStunState(125, 50);
 		}
 	}*/
 
-	if (IsValid(m_State))
+	if (IsValid(State))
 	{
-		m_State->Update(*this);
+		State->Update(*this);
 
-		UFightState* newState = m_State->HandleInput(*this);
+		UFightState* newState = State->HandleInput(*this);
 
 		if (IsValid(newState))
 		{
-			m_State->Exit(*this);
+			State->Exit(*this);
 
-			m_State->RemoveFromRoot();
+			State->RemoveFromRoot();
 
-			UFightState* stateToDestroy = m_State;
-			m_State = nullptr;
-			m_State = newState;
+			UFightState* stateToDestroy = State;
+			State = nullptr;
+			State = newState;
 
-			m_State->AddToRoot();
-			m_State->Enter(*this);
+			State->AddToRoot();
+			State->Enter(*this);
 		}
 	}
 
@@ -201,7 +200,7 @@ void ABaseFighter::Tick(float DeltaTime)
 	{
 		loc.Y = 2000.f;
 
-		m_FighterMesh->GetBodyInstance()->bLockYTranslation = true;
+		FighterMesh->GetBodyInstance()->bLockYTranslation = true;
 	}
 	if (loc.Y < -2000.f)
 	{
@@ -216,8 +215,6 @@ void ABaseFighter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Purple, TEXT("Input initialization called"));
-
 	UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 
 	for (int i = 0; i < MappingContext->GetMappings().Num(); i++)
@@ -230,26 +227,26 @@ void ABaseFighter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		{
 			item->AssignDirection(input);
 
-			m_BufferHandler->InputBufferItems.Add(item);
+			BufferHandler->InputBufferItems.Add(item);
 
-			EnhancedInput->BindAction(MappingContext->GetMappings()[i].Action, ETriggerEvent::Triggered, this, &ABaseFighter::ButtonPressed, m_BufferHandler->InputBufferItems.Num() - 1);
-			EnhancedInput->BindAction(MappingContext->GetMappings()[i].Action, ETriggerEvent::Completed, this, &ABaseFighter::ButtonPressed, m_BufferHandler->InputBufferItems.Num() - 1);
+			EnhancedInput->BindAction(MappingContext->GetMappings()[i].Action, ETriggerEvent::Triggered, this, &ABaseFighter::ButtonPressed, BufferHandler->InputBufferItems.Num() - 1);
+			EnhancedInput->BindAction(MappingContext->GetMappings()[i].Action, ETriggerEvent::Completed, this, &ABaseFighter::ButtonPressed, BufferHandler->InputBufferItems.Num() - 1);
 		}
 	}
 }
 
 void ABaseFighter::WalkForward()
 {
-	if (m_FighterMesh != nullptr)
+	if (FighterMesh != nullptr)
 	{
 		float dir = 0;
 
-		if (m_FacingRight)
-			dir = m_ForwardWalkSpeed;
-		else if (!m_FacingRight)
-			dir = -m_ForwardWalkSpeed;
+		if (FacingRight)
+			dir = ForwardWalkSpeed;
+		else if (!FacingRight)
+			dir = -ForwardWalkSpeed;
 
-		//m_FighterMesh->SetPhysicsLinearVelocity(FVector(0, dir, 0));
+		//FighterMesh->SetPhysicsLinearVelocity(FVector(0, dir, 0));
 
 		GetCharacterMovement()->Velocity = (FVector(0, dir, 0));
 	}
@@ -257,16 +254,16 @@ void ABaseFighter::WalkForward()
 
 void ABaseFighter::WalkBackward()
 {
-	if (m_FighterMesh != nullptr)
+	if (FighterMesh != nullptr)
 	{
 		float dir = 0;
 
-		if (m_FacingRight)
-			dir = -m_BackwardWalkSpeed;
-		else if (!m_FacingRight)
-			dir = m_BackwardWalkSpeed;
+		if (FacingRight)
+			dir = -BackwardWalkSpeed;
+		else if (!FacingRight)
+			dir = BackwardWalkSpeed;
 
-		//m_FighterMesh->SetPhysicsLinearVelocity(FVector(0, dir, 0));
+		//FighterMesh->SetPhysicsLinearVelocity(FVector(0, dir, 0));
 
 		GetCharacterMovement()->Velocity = (FVector(0, dir, 0));
 	}
@@ -274,11 +271,11 @@ void ABaseFighter::WalkBackward()
 
 void ABaseFighter::RotateTowardsDirection()
 {
-	if (m_FacingRight)
+	if (FacingRight)
 	{
 		GetCapsuleComponent()->SetWorldScale3D(FVector(1, 1, 1));
 	}
-	else if (!m_FacingRight)
+	else if (!FacingRight)
 	{
 		GetCapsuleComponent()->SetWorldScale3D(FVector(1, -1, 1));
 	}
@@ -319,11 +316,11 @@ void ABaseFighter::AirCollisionCheck()
 
 		double distance = (depth / 2.0) * v.Y;*/
 
-		if (m_FacingRight)
+		if (FacingRight)
 		{
 			SetActorLocation(FVector(GetActorLocation().X, other->GetActorLocation().Y - (total), GetActorLocation().Z));
 		}
-		else if (!m_FacingRight)
+		else if (!FacingRight)
 		{
 			SetActorLocation(FVector(GetActorLocation().X, other->GetActorLocation().Y + (total), GetActorLocation().Z));
 		}
@@ -334,11 +331,11 @@ void ABaseFighter::AirCollisionCheck()
 
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::SanitizeFloat(z));
 
-		if (m_FacingRight)
+		if (FacingRight)
 		{
 			SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y - z, GetActorLocation().Z));
 		}
-		else if (!m_FacingRight)
+		else if (!FacingRight)
 		{
 			SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y + z, GetActorLocation().Z));
 		}*/
@@ -347,23 +344,23 @@ void ABaseFighter::AirCollisionCheck()
 
 void ABaseFighter::ResetPlayer()
 {
-	m_CurrentHealth = m_MaxHealth;
+	CurrentHealth = MaxHealth;
 
 	ChangeState(NewObject<UGroundedState>());
 }
 
 void ABaseFighter::ChangeState(UFightState* state)
 {
-	m_State->Exit(*this);
+	State->Exit(*this);
 
-	m_State->RemoveFromRoot();
+	State->RemoveFromRoot();
 
-	UFightState* stateToDestroy = m_State;
-	m_State = nullptr;
-	m_State = state;
+	UFightState* stateToDestroy = State;
+	State = nullptr;
+	State = state;
 
-	m_State->AddToRoot();
-	m_State->Enter(*this);
+	State->AddToRoot();
+	State->Enter(*this);
 }
 
 //void ABaseFighter::ChangeToStunState()
@@ -372,7 +369,7 @@ void ABaseFighter::ChangeState(UFightState* state)
 //
 //	UAirStunState* state = NewObject<UAirStunState>();
 //	//state->Init(1500, 400);
-//	//m_State->NextState = state;
+//	//State->NextState = state;
 //
 //	ChangeState(NewObject<UKnockbackStunState>());
 //}
@@ -383,7 +380,7 @@ void ABaseFighter::ChangeToBlockState(float knockback, int duration)
 
 	UBlockStunState* state = NewObject<UBlockStunState>();
 	//state->Init(1500, 400);
-	//m_State->NextState = state;
+	//State->NextState = state;
 	state->Init(duration, knockback);
 	ChangeState(state);
 }
@@ -394,7 +391,7 @@ void ABaseFighter::ChangeToStunState(float knockback, int duration)
 
 	UKnockbackStunState* state = NewObject<UKnockbackStunState>();
 	//state->Init(1500, 400);
-	//m_State->NextState = state;
+	//State->NextState = state;
 	state->Init(knockback, duration);
 	ChangeState(state);
 }
@@ -405,14 +402,14 @@ void ABaseFighter::ChangeToKnockbackState(float launch, float knockback)
 
 	UAirStunState* state = NewObject<UAirStunState>();
 	//state->Init(1500, 400);
-	//m_State->NextState = state;
+	//State->NextState = state;
 	state->Init(launch, knockback);
 	ChangeState(state);
 }
 
 void ABaseFighter::ChangeToGrabState()
 {
-	ChangeState(DuplicateObject(m_GrabState.GetDefaultObject(), nullptr));
+	ChangeState(DuplicateObject(GrabState.GetDefaultObject(), nullptr));
 }
 
 void ABaseFighter::ChangeToGrabbedState()
@@ -424,20 +421,20 @@ void ABaseFighter::ButtonPressed(const FInputActionValue& value, const int index
 {
 	const bool pressed = value.Get<bool>();
 
-	m_BufferHandler->InputBufferItems[index]->SetInputActionPressed(pressed);
+	BufferHandler->InputBufferItems[index]->SetInputActionPressed(pressed);
 }
 
 void ABaseFighter::AddSuperBar(float value)
 {
-	m_CurrentSuperBar += value;
+	CurrentSuperBar += value;
 
-	if (m_CurrentSuperBar >= m_MaxSuperBar)
-		m_CurrentSuperBar = m_MaxSuperBar;
+	if (CurrentSuperBar >= MaxSuperBar)
+		CurrentSuperBar = MaxSuperBar;
 }
 
 void ABaseFighter::SetFreezeTime(int duration)
 {
-	m_FreezeTime = duration;
+	FreezeTime = duration;
 }
 
 void ABaseFighter::TakeDamage(float damage)
@@ -445,12 +442,12 @@ void ABaseFighter::TakeDamage(float damage)
 	if (damage < 0)
 		return;
 
-	m_CurrentHealth -= damage;
+	CurrentHealth -= damage;
 }
 
 bool ABaseFighter::IsHoldingBlock()
 {
-	UGroundedState* fightState = Cast<UGroundedState>(m_State);
+	UGroundedState* fightState = Cast<UGroundedState>(State);
 	bool exists = (fightState != nullptr);
 
 	if (!exists)
@@ -486,14 +483,14 @@ bool ABaseFighter::InputCheck(EInputType input)
 			if (ReturnInputBuffer()->InputBufferItems[i]->InputDirection == input)
 			{
 				//DEV NOTE: 0 is the unnused state for the buffer. Start with 1 for input buffer check. BUG!!! LOOK INTO THIS WHY IT HAPPENS IN UE5 & NOT IN UNITY!!!!
-				for (int j = 1; j < ReturnInputBuffer()->InputBufferItems[i]->Buffer.Num(); j++)
+				for (int j = 0; j < ReturnInputBuffer()->InputBufferItems[i]->Buffer.Num(); j++)
 				{
 					if (ReturnInputBuffer()->InputBufferItems[i]->Buffer[j].CanExecute())
 					{
 						ReturnInputBuffer()->InputBufferItems[i]->Buffer[j].SetUsedTrue();
 
 						// For debugging purposes
-						int value = m_BufferHandler->InputBufferItems[i]->Buffer[j].HoldTime;
+						int value = BufferHandler->InputBufferItems[i]->Buffer[j].HoldTime;
 
 						return 1;
 					}
@@ -509,10 +506,10 @@ bool ABaseFighter::InputCheck(EInputType input)
 
 UFightState* ABaseFighter::ReturnSpecialMoveByMotion()
 {
-	for (int i = 0; i < m_SpecialMoves.Num(); i++)
+	for (int i = 0; i < SpecialMoves.Num(); i++)
 	{
-		if(m_SpecialMoves[i].m_MotionInput.MotionComplete())
-			return DuplicateObject(m_SpecialMoves[i].m_State.GetDefaultObject(), nullptr);
+		if(SpecialMoves[i].MotionInput.MotionComplete())
+			return DuplicateObject(SpecialMoves[i].State.GetDefaultObject(), nullptr);
 	}
 
 	return nullptr;
@@ -520,7 +517,7 @@ UFightState* ABaseFighter::ReturnSpecialMoveByMotion()
 
 const bool ABaseFighter::HasHitEnemy()
 {
-	if (m_HitboxHandler->ReturnCollidedActors().Num() > 0)
+	if (HitboxesHandler->ReturnCollidedActors().Num() > 0)
 		return 1;
 
 	return 0;
@@ -528,7 +525,7 @@ const bool ABaseFighter::HasHitEnemy()
 
 UFightState* ABaseFighter::GetCurrentState()
 {
-	return m_State;
+	return State;
 }
 
 UGroundedAttackState* ABaseFighter::ReturnAttackState()
@@ -537,7 +534,7 @@ UGroundedAttackState* ABaseFighter::ReturnAttackState()
 	// The bigger issue, however, is that dynamic cast may cause inaccuracies (incorrect state/data, no state at all).
 	// This is now implemented due to UE being extremely difficult with checking & returning what state the player is currently in.
 	// TODO: Ask other devs for feedback/help
-	UGroundedAttackState* fightState = Cast<UGroundedAttackState>(m_State);
+	UGroundedAttackState* fightState = Cast<UGroundedAttackState>(State);
 	bool exists = (fightState != nullptr);
 
 	if (exists)
@@ -552,7 +549,7 @@ UGrabState* ABaseFighter::ReturnGrabState()
 	// The bigger issue, however, is that dynamic cast may cause inaccuracies (incorrect state/data, no state at all).
 	// This is now implemented due to UE being extremely difficult with checking & returning what state the player is currently in.
 	// TODO: Ask other devs for feedback/help
-	UGrabState* fightState = Cast<UGrabState>(m_State);
+	UGrabState* fightState = Cast<UGrabState>(State);
 	bool exists = (fightState != nullptr);
 
 	if (exists)
@@ -563,7 +560,7 @@ UGrabState* ABaseFighter::ReturnGrabState()
 
 bool ABaseFighter::IsAlive() const
 {
-	if (m_CurrentHealth > 0)
+	if (CurrentHealth > 0)
 		return 1;
 
 	return 0;
@@ -581,48 +578,48 @@ float ABaseFighter::GetJumpMoveForce() const
 
 bool ABaseFighter::IsFacingRight() const
 {
-	return m_FacingRight;
+	return FacingRight;
 }
 
 UInputBuffer* ABaseFighter::ReturnInputBuffer()
 {
-	return m_BufferHandler;
+	return BufferHandler;
 }
 
 HitboxHandler* ABaseFighter::ReturnHitboxHandler()
 {
-	return m_HitboxHandler;
+	return HitboxesHandler;
 }
 
 EInputType ABaseFighter::ReturnForwardInput()
 {
-	return m_ForwardInput;
+	return ForwardInput;
 }
 
 EInputType ABaseFighter::ReturnBackwardInput()
 {
-	return m_BackwardInput;
+	return BackwardInput;
 }
 
 void ABaseFighter::SetFacingRight(bool side)
 {
-	m_FacingRight = side;
+	FacingRight = side;
 
-	if (m_FacingRight)
+	if (FacingRight)
 	{
-		m_ForwardInput = EInputType::Right;
-		m_BackwardInput = EInputType::Left;
+		ForwardInput = EInputType::Right;
+		BackwardInput = EInputType::Left;
 	}
-	else if (!m_FacingRight)
+	else if (!FacingRight)
 	{
-		m_ForwardInput = EInputType::Left;
-		m_BackwardInput = EInputType::Right;
+		ForwardInput = EInputType::Left;
+		BackwardInput = EInputType::Right;
 	}
 }
 
 bool ABaseFighter::IsGrounded() const
 {
-	if (m_FighterMesh != nullptr)
+	if (FighterMesh != nullptr)
 	{
 		auto loc = GetActorLocation().Z;
 
@@ -677,15 +674,15 @@ void ABaseFighter::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrim
 
 	FVector loc = GetActorLocation();
 
-	if(!m_FacingRight && loc.Y >= 2000)
+	if(!FacingRight && loc.Y >= 2000)
 	{
 		double dis = fabsf(bottom->GetActorLocation().Y - loc.Y);
 
-		double col = ((m_FighterMesh->GetUnscaledBoxExtent().Y / 2) + (bottom->m_FighterMesh->GetUnscaledBoxExtent().Y / 2));
+		double col = ((FighterMesh->GetUnscaledBoxExtent().Y / 2) + (bottom->FighterMesh->GetUnscaledBoxExtent().Y / 2));
 
 		double difference = dis - col;
 
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Box: ") + FString::SanitizeFloat(m_FighterMesh->GetUnscaledBoxExtent().Y));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Box: ") + FString::SanitizeFloat(FighterMesh->GetUnscaledBoxExtent().Y));
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Distance: ") + FString::SanitizeFloat(dis));
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Collision: ") + FString::SanitizeFloat(col));
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Difference: ") + FString::SanitizeFloat(difference));
@@ -693,8 +690,8 @@ void ABaseFighter::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrim
 		if (dis < col)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("lmao 2"));
 		{
-			bottom->SetActorLocation(FVector(bottom->GetActorLocation().X, GetActorLocation().Y - (m_FighterMesh->GetUnscaledBoxExtent().Y * 2), bottom->GetActorLocation().Z));
-			bottom->m_FighterMesh->SetPhysicsLinearVelocity(FVector::Zero());
+			bottom->SetActorLocation(FVector(bottom->GetActorLocation().X, GetActorLocation().Y - (FighterMesh->GetUnscaledBoxExtent().Y * 2), bottom->GetActorLocation().Z));
+			bottom->FighterMesh->SetPhysicsLinearVelocity(FVector::Zero());
 		}
 	}
 
@@ -702,12 +699,12 @@ void ABaseFighter::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrim
 
 	//if (temp != nullptr)
 	//{
-	//	if ((this->GetActorLocation().Z + this->m_FighterMesh->GetUnscaledBoxExtent().Z) > (OtherActor->GetActorLocation().Z + temp->m_FighterMesh->GetUnscaledBoxExtent().Z))
+	//	if ((this->GetActorLocation().Z + this->FighterMesh->GetUnscaledBoxExtent().Z) > (OtherActor->GetActorLocation().Z + temp->FighterMesh->GetUnscaledBoxExtent().Z))
 	//	{
 	//		top = this;
 	//		bottom = temp;
 	//	}
-	//	else if ((OtherActor->GetActorLocation().Z + temp->m_FighterMesh->GetUnscaledBoxExtent().Z) > (this->GetActorLocation().Z + this->m_FighterMesh->GetUnscaledBoxExtent().Z))
+	//	else if ((OtherActor->GetActorLocation().Z + temp->FighterMesh->GetUnscaledBoxExtent().Z) > (this->GetActorLocation().Z + this->FighterMesh->GetUnscaledBoxExtent().Z))
 	//	{
 	//		top = temp;
 	//		bottom = this;
@@ -716,18 +713,18 @@ void ABaseFighter::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrim
 	//	if (top == nullptr || top != this)
 	//		return;
 
-	//	/*FString s = FString::SanitizeFloat(top->GetActorLocation().Z + top->m_FighterMesh->GetUnscaledBoxExtent().Z);
-	//	FString s2 = FString::SanitizeFloat(bottom->GetActorLocation().Z + bottom->m_FighterMesh->GetUnscaledBoxExtent().Z);
+	//	/*FString s = FString::SanitizeFloat(top->GetActorLocation().Z + top->FighterMesh->GetUnscaledBoxExtent().Z);
+	//	FString s2 = FString::SanitizeFloat(bottom->GetActorLocation().Z + bottom->FighterMesh->GetUnscaledBoxExtent().Z);
 
 	//	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, *s);
 	//	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, *s2);*/
 
 	//	// TODO: Adjust distance based on the size of the pushbox & the distance between the fighters
-	//	if ((top->GetActorLocation().Y < bottom->GetActorLocation().Y) && (top->GetActorLocation().Z != bottom->GetActorLocation().Z) && top->GetCurrentState() == dynamic_cast<UAirborneState*>(top->GetCurrentState()) && (top->m_FighterMesh->GetComponentVelocity().Z < 0))
+	//	if ((top->GetActorLocation().Y < bottom->GetActorLocation().Y) && (top->GetActorLocation().Z != bottom->GetActorLocation().Z) && top->GetCurrentState() == dynamic_cast<UAirborneState*>(top->GetCurrentState()) && (top->FighterMesh->GetComponentVelocity().Z < 0))
 	//	{
 	//		float distance = bottom->GetActorLocation().Y - top->GetActorLocation().Y;
 
-	//		float col = (top->m_FighterMesh->GetUnscaledBoxExtent().Y) + (bottom->m_FighterMesh->GetUnscaledBoxExtent().Y);
+	//		float col = (top->FighterMesh->GetUnscaledBoxExtent().Y) + (bottom->FighterMesh->GetUnscaledBoxExtent().Y);
 
 	//		float dif = col - distance;
 
@@ -743,11 +740,11 @@ void ABaseFighter::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrim
 	//		top->SetActorLocation(leftLoc);
 	//		bottom->SetActorLocation(rightLox);
 	//	}
-	//	else if (top->GetActorLocation().Y > bottom->GetActorLocation().Y && top->GetActorLocation().Z != bottom->GetActorLocation().Z && top->GetCurrentState() == dynamic_cast<UAirborneState*>(top->GetCurrentState()) && (top->m_FighterMesh->GetComponentVelocity().Z < 0))
+	//	else if (top->GetActorLocation().Y > bottom->GetActorLocation().Y && top->GetActorLocation().Z != bottom->GetActorLocation().Z && top->GetCurrentState() == dynamic_cast<UAirborneState*>(top->GetCurrentState()) && (top->FighterMesh->GetComponentVelocity().Z < 0))
 	//	{
 	//		float distance = top->GetActorLocation().Y - bottom->GetActorLocation().Y;
 
-	//		float col = (top->m_FighterMesh->GetUnscaledBoxExtent().Y) + (bottom->m_FighterMesh->GetUnscaledBoxExtent().Y);
+	//		float col = (top->FighterMesh->GetUnscaledBoxExtent().Y) + (bottom->FighterMesh->GetUnscaledBoxExtent().Y);
 
 	//		float dif = col - distance;
 
@@ -774,10 +771,10 @@ void ABaseFighter::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrim
 
 USpecialMoveState* ABaseFighter::ReturnSpecialMove()
 {
-	/*for(int i = 0; i < m_SpecialMoves.Num(); i++)
+	/*for(int i = 0; i < SpecialMoves.Num(); i++)
 	{
-		if (m_SpecialMoves[i].GetDefaultObject()->m_MotionInput->MotionComplete())
-			return m_SpecialMoves[i];
+		if (SpecialMoves[i].GetDefaultObject()->MotionInput->MotionComplete())
+			return SpecialMoves[i];
 	}*/
 
 	return nullptr;
@@ -785,8 +782,33 @@ USpecialMoveState* ABaseFighter::ReturnSpecialMove()
 
 bool ABaseFighter::IsInBlockState() const
 {
-	UBlockState* fightState = Cast<UBlockState>(m_State);
+	UBlockState* fightState = Cast<UBlockState>(State);
 	bool exists = (fightState != nullptr);
 
 	return exists;
+}
+
+FString ABaseFighter::GetInputBufferData()
+{
+	FString strin = InputToString(ReturnInputBuffer()->InputBufferItems[0]->InputDirection) + ": ";
+
+	for(int i = 0; i < ReturnInputBuffer()->InputBufferItems[0]->Buffer.Num(); i++)
+	{
+		strin.Append(FString::FromInt(ReturnInputBuffer()->InputBufferItems[0]->Buffer[i].HoldTime));
+
+		if (i < ReturnInputBuffer()->InputBufferItems[0]->Buffer.Num() - 1)
+			strin.Append(" ");
+	}
+
+	return strin;
+}
+
+FString ABaseFighter::GetInputBufferName()
+{
+	return InputToString(ReturnInputBuffer()->InputBufferItems[0]->InputDirection) + ": ";
+}
+
+FString ABaseFighter::GetInputBufferDataByIndex(int index)
+{
+	return FString::FromInt(ReturnInputBuffer()->InputBufferItems[0]->Buffer[index].HoldTime);
 }

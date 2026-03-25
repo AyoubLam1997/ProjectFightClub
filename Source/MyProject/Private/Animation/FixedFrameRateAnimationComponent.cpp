@@ -24,11 +24,11 @@ void UFixedFrameRateAnimationComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ACharacter* figher = Cast<ABaseFighter>(GetOwner());
+	/*ACharacter* figher = Cast<ABaseFighter>(GetOwner());
 	 
-	figher->GetMesh()->SetPlayRate(0);
+	figher->GetMesh()->SetPlayRate(0);*/
 
-	CurrentFrame = 0;
+	//CurrentFrame = 0;
 
 	// ...
 	
@@ -39,7 +39,15 @@ void UFixedFrameRateAnimationComponent::TickComponent(float DeltaTime, ELevelTic
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	ACharacter* fighter = Cast<ABaseFighter>(GetOwner());
+	/*float d = DeltaTime;
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::SanitizeFloat(d));
+
+	ACharacter* figher = Cast<ABaseFighter>(GetOwner());
+
+	figher->GetMesh()->SetPlayRate(1);
+	figher->GetMesh()->Play(1);*/
+
+	/*ACharacter* fighter = Cast<ABaseFighter>(GetOwner());
 
 	UAnimSingleNodeInstance* SingleNodeInstance = fighter->GetMesh()->GetSingleNodeInstance();
 
@@ -59,9 +67,9 @@ void UFixedFrameRateAnimationComponent::TickComponent(float DeltaTime, ELevelTic
 
 	float p = float((float(CurrentFrame) / 60.f));
 
-	fighter->GetMesh()->SetPosition(p);
+	fighter->GetMesh()->SetPosition(p);*/
 
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::FromInt(CurrentFrame));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::FromInt(CurrentFrame));
 
 	//figher->GetMesh()->SetPosition(figher->GetMesh()->GetPosition() + DeltaTime);
 

@@ -33,7 +33,7 @@ public:
 	//UFightState* NextState = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UAnimSequence* m_AnimationSequence;
+	UAnimSequence* AnimationSequenceToPlay;
 
 	virtual void Enter(ABaseFighter& fighter) {};
 	virtual UFightState* HandleInput(ABaseFighter& fighter) { return nullptr; };
@@ -79,7 +79,7 @@ public:
 
 private:
 
-	float m_LayingTimer;
+	float LayingTimer;
 };
 
 UCLASS(Blueprintable, BlueprintType)
@@ -132,14 +132,14 @@ public:
 	virtual void Exit(ABaseFighter& fighter) override {};
 
 	UPROPERTY(EditAnywhere)
-	FVector m_DashImpulse;
+	FVector DashImpulse;
 
 	UPROPERTY(EditAnywhere)
-	int m_DashStartUp;
+	int DashStartUp;
 	UPROPERTY(EditAnywhere)
-	int m_DashStartRecovery;
+	int DashStartRecovery;
 
-	int m_CurrentFrame;
+	int CurrentFrame;
 };
 
 UCLASS(Blueprintable, BlueprintType)
@@ -174,8 +174,8 @@ class MYPROJECT_API UAirborneState : public UFightState
 	GENERATED_BODY()
 public:
 
-	float m_CurrentFallVelocity;
-	float m_MaxFallVelocity = 1500.f;
+	float CurrentFallVelocity;
+	float MaxFallVelocity = 1500.f;
 
 	UAirborneState();
 	UAirborneState(FVector impulse);
@@ -188,7 +188,7 @@ public:
 
 private:
 
-	FVector m_ImpulseDirection;
+	FVector ImpulseDirection;
 };
 
 UCLASS(Blueprintable, BlueprintType)
@@ -211,7 +211,7 @@ class MYPROJECT_API UForwardJumpState : public UAirborneState
 	GENERATED_BODY()
 public:
 
-	float m_ForwardVelocity = 400.f;
+	float ForwardVelocity = 400.f;
 
 	UForwardJumpState();
 	UForwardJumpState(FVector impulse);
@@ -224,7 +224,7 @@ public:
 
 private:
 
-	FVector m_ImpulseDirection;
+	FVector ImpulseDirection;
 };
 
 UCLASS(Blueprintable, BlueprintType)
@@ -233,7 +233,7 @@ class MYPROJECT_API UBackwardJumpState :public UAirborneState
 	GENERATED_BODY()
 public:
 
-	float m_BackwardVelocity = -400.f;
+	float BackwardVelocity = -400.f;
 
 	UBackwardJumpState();
 	UBackwardJumpState(FVector impulse);
@@ -246,7 +246,7 @@ public:
 
 private:
 
-	FVector m_ImpulseDirection;
+	FVector ImpulseDirection;
 };
 
 UCLASS(Blueprintable, BlueprintType)
@@ -295,7 +295,7 @@ class MYPROJECT_API UStunState : public UFightState
 	GENERATED_BODY()
 public:
 
-	int m_CurrentStunTime;
+	int CurrentStunTime;
 
 	UStunState() {};
 
@@ -313,8 +313,8 @@ class MYPROJECT_API UKnockbackStunState : public UStunState
 	GENERATED_BODY()
 public:
 
-	float m_Pushback;
-	int m_StunDuration;
+	float Pushback;
+	int StunDuration;
 
 	UKnockbackStunState();
 	UKnockbackStunState(float pushback, int duration);
@@ -335,11 +335,11 @@ class MYPROJECT_API UAirStunState : public UStunState
 	GENERATED_BODY()
 public:
 
-	float m_VerticalKnockBack;
-	float m_HorizontalKnockback;
+	float VerticalKnockBack;
+	float HorizontalKnockback;
 
-	float m_MaxFallVelocity;
-	float m_CurrentFallVelocity;
+	float MaxFallVelocity;
+	float CurrentFallVelocity;
 
 	UAirStunState();
 	UAirStunState(float velocity, float horizontal);
@@ -353,7 +353,7 @@ public:
 
 private:
 
-	FVector m_ImpulseDirection;
+	FVector ImpulseDirection;
 };
 
 UCLASS(Blueprintable, BlueprintType)
@@ -371,10 +371,10 @@ public:
 
 private:
 
-	int m_CurrentFrame;
+	int CurrentFrame;
 
-	int m_MinFrame = 5;
-	int m_MaxFrame = 8;
+	int MinFrame = 5;
+	int MaxFrame = 8;
 };
 
 // DEV NOTE: Probably make this a uclass that designers can edit
@@ -400,10 +400,10 @@ class MYPROJECT_API UGrabState : public UFightState
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float m_Damage;
+	float Damage;
 
 	UPROPERTY(EditAnywhere)
-	int m_DamageFrame;
+	int DamageFrame;
 
 	virtual void Enter(ABaseFighter& fighter) override;
 	virtual UFightState* HandleInput(ABaseFighter& fighter) override;
@@ -415,7 +415,7 @@ public:
 
 private:
 
-	ABaseFighter* m_EnemyFighter;
+	ABaseFighter* EnemyFighter;
 };
 
 // TODO: Remove GroundedState property
@@ -427,30 +427,33 @@ class MYPROJECT_API UGroundedAttackState : public UGroundedState
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float m_Damage;
+	float Damage;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float KnockBack;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int StunTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int m_MinFrame;
+	int MinFrame;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int m_MaxFrame;
+	int MaxFrame;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int m_FreezeTime;
+	int FreezeTime;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FVector m_BoxPosition;
+	FVector BoxPosition;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FVector m_BoxExtent;
+	FVector BoxExtent;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float BlockKnockBack;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int BlockStunTime;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimSequence* TempAnimSeq;
+
 	UPROPERTY(EditAnywhere)
-	UHitboxResponder* m_Responder;
+	UHitboxResponder* Responder;
 
 	virtual void Enter(ABaseFighter& fighter) override;
 	virtual UFightState* HandleInput(ABaseFighter& fighter) override;
@@ -468,7 +471,7 @@ public:
 
 protected:
 
-	int m_CurrentFrame;
+	int CurrentFrame;
 };
 
 //TODO: ADJUST THIS TO TRANSITION TO ANY DESIRED STATE (THAT MAKES USE OF THE DATA TABLES?)
@@ -482,7 +485,7 @@ public:
 	FStateToTransition();
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UFightState> m_State;
+	TSubclassOf<UFightState> State;
 };
 
 USTRUCT(Blueprintable, BlueprintType)
@@ -495,7 +498,7 @@ public:
 	FStatesToTransitionButton();
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	EInputType m_Input;
+	EInputType Input;
 };
 
 //USTRUCT(Blueprintable, BlueprintType)
@@ -505,7 +508,7 @@ public:
 //
 //public:
 //
-//	TArray<EInputType> m_Inputs;
+//	TArray<EInputType> Inputs;
 //};
 
 UCLASS(Blueprintable, BlueprintType)
@@ -516,12 +519,12 @@ class MYPROJECT_API UGroundedComboAttackState : public UGroundedAttackState
 public:
 
 	UPROPERTY(EditAnywhere)
-	FStatesToTransitionButton m_State;
+	FStatesToTransitionButton State;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int m_MinCancelFrame;
+	int MinCancelFrame;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int m_MaxCancelFrame;
+	int MaxCancelFrame;
 
 	virtual UFightState* HandleInput(ABaseFighter& fighter) override;
 };
@@ -535,9 +538,9 @@ public:
 	USpecialMoveState();
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<EInputType> m_RequiredInput;
+	TArray<EInputType> RequiredInput;
 
-	UMotionInput* m_MotionInput;
+	UMotionInput* MotionInput;
 
 	//UMotionInput* ReturnMotionInput();
 };
@@ -558,6 +561,6 @@ class MYPROJECT_API USpecialMoveTransitionState : public USpecialMoveState
 public:
 
 	UPROPERTY(EditAnywhere)
-	FStatesToTransitionButton m_State;
+	FStatesToTransitionButton State;
 
 };

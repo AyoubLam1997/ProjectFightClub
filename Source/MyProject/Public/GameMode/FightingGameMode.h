@@ -43,23 +43,23 @@ public:
 	void SwitchGameState(EFighGameState state);
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<ABaseFighter> m_FighterToSpawn;
+	TSubclassOf<ABaseFighter> FighterToSpawn;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AAIFighterControllerPawn> AIToSpawn;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	ABaseFighter* m_P1Fighter;
+	ABaseFighter* P1Fighter;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	ABaseFighter* m_P2Fighter;
+	ABaseFighter* P2Fighter;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	ACameraActor* m_Camera;
+	ACameraActor* Camera;
 
-	EFighGameState m_GameState;
+	EFighGameState GameState;
 
-	float m_CurrentTimer;
-	float m_MaxTimer;
+	float CurrentTimer;
+	float MaxTimer;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float MaxLevelSize;
@@ -76,10 +76,10 @@ class MYPROJECT_API APlayArea : public AGameModeBase
 public:
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<ABaseFighter> m_FighterToSpawn;
+	TSubclassOf<ABaseFighter> FighterToSpawn;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	ABaseFighter* m_P1Fighter;
+	ABaseFighter* P1Fighter;
 
 	void BeginPlay() override;
 	void Tick(float DeltaTime) override;
